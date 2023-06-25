@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct ContentView: View {
     @State private var isSecondScreenActive = false
@@ -116,14 +117,8 @@ struct Tab1View: View {
 
 struct Tab2View: View {
     var body: some View {
-        VStack {
-            Text("Current Scene from camera")
-                .font(.title)
-                .padding()
-            
-            // Add more content specific to Tab 2
+            CameraView() // Display the camera view
         }
-    }
 }
 
 struct Tab3View: View {
@@ -175,6 +170,79 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
+struct CameraPreview: UIViewRepresentable {
+    let previewLayer: AVCaptureVideoPreviewLayer
+    
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        previewLayer.videoGravity = .resizeAspectFill
+        view.layer.addSublayer(previewLayer)
+        return view
+    }
+    
+    func updateUIView(_ uiView: UIView, context: Context) {
+        previewLayer.frame = uiView.bounds
+    }
+}
+
+struct CameraView: View {
+    @State private var isCameraActive = false
+    private let session = AVCaptureSession()
+    private let previewLayer = AVCaptureVideoPreviewLayer()
+    
+    var body: some View {
+        VStack {
+            if isCameraActive {
+                // Display the camera preview
+                CameraPreview(previewLayer: previewLayer)
+            } else {
+                // Show a placeholder or alternative content when camera is inactive
+                Text("Camera Inactive")
+                    .font(.title)
+                    .padding()
+            }
+        }
+        .onAppear {
+            setupCamera()
+            startCamera()
+        }
+        .onDisappear {
+            stopCamera()
+        }
+    }
+    
+    private func setupCamera() {
+        guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
+            print("Unable to access camera")
+            return
+        }
+        
+        do {
+            let input = try AVCaptureDeviceInput(device: device)
+            session.beginConfiguration()
+            if session.canAddInput(input) {
+                session.addInput(input)
+            }
+            session.commitConfiguration()
+            
+            previewLayer.session = session
+        } catch {
+            print("Error setting up camera: \(error.localizedDescription)")
+        }
+    }
+    
+    private func startCamera() {
+        session.startRunning()
+        isCameraActive = true
+    }
+    
+    private func stopCamera() {
+        session.stopRunning()
+        isCameraActive = false
+    }
+}
+
 
 extension Font {
     static func interFont(size: CGFloat, weight: Font.Weight = .regular) -> Font {
