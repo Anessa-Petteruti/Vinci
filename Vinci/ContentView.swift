@@ -78,25 +78,13 @@ struct SecondView: View {
             .frame(height: 50)
             
             TabView(selection: $selectedTab) {
-                Text("Tab 1")
-                    .tabItem {
-                        Image(systemName: "1.circle")
-                        Text("Tab 1")
-                    }
+                Tab1View()
                     .tag(1)
                 
-                Text("Tab 2")
-                    .tabItem {
-                        Image(systemName: "2.circle")
-                        Text("Tab 2")
-                    }
+                Tab2View()
                     .tag(2)
                 
-                Text("Tab 3")
-                    .tabItem {
-                        Image(systemName: "3.circle")
-                        Text("Tab 3")
-                    }
+                Tab3View()
                     .tag(3)
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
@@ -110,6 +98,42 @@ struct SecondView: View {
                         }
                     }
             )
+        }
+    }
+}
+
+struct Tab1View: View {
+    var body: some View {
+        VStack {
+            Text("Conversation with Vinci")
+                .font(.title)
+                .padding()
+            
+            // Add more content specific to Tab 1
+        }
+    }
+}
+
+struct Tab2View: View {
+    var body: some View {
+        VStack {
+            Text("Current Scene from camera")
+                .font(.title)
+                .padding()
+            
+            // Add more content specific to Tab 2
+        }
+    }
+}
+
+struct Tab3View: View {
+    var body: some View {
+        VStack {
+            Text("My artifacts, scenes, profile")
+                .font(.title)
+                .padding()
+            
+            // Add more content specific to Tab 3
         }
     }
 }
