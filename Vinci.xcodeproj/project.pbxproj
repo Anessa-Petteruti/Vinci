@@ -95,6 +95,7 @@
 		F692CBF72A48C8E200661CE0 /* Vinci */ = {
 			isa = PBXGroup;
 			children = (
+				F692CC232A48CFE100661CE0 /* Fonts */,
 				F692CBF82A48C8E200661CE0 /* VinciApp.swift */,
 				F692CBFA2A48C8E200661CE0 /* ContentView.swift */,
 				F692CBFC2A48C8E400661CE0 /* Assets.xcassets */,
@@ -127,6 +128,13 @@
 				F692CC162A48C8E400661CE0 /* VinciUITestsLaunchTests.swift */,
 			);
 			path = VinciUITests;
+			sourceTree = "<group>";
+		};
+		F692CC232A48CFE100661CE0 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
