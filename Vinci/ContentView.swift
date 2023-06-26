@@ -177,11 +177,54 @@ struct ChatView: View {
         VStack {
             ScrollViewReader { scrollView in
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 10) {
-                        ForEach(conversation, id: \.self) { message in
-                            Text(message)
-                                .id(UUID()) // Add a unique identifier for each message
-                        }
+                    GeometryReader { geometry in
+                        LazyVStack(alignment: .leading, spacing: 10) {
+                            ForEach(conversation, id: \.self) { message in
+                                if message.starts(with: "Vinci:") {
+                                    let parts = message.split(separator: ":", maxSplits: 1)
+                                    if let name = parts.first, let content = parts.last {
+                                        HStack(alignment: .top) {
+                                            Text(name.trimmingCharacters(in: .whitespaces))
+                                                .bold() // Make the name bold
+                                                .font(.interFont(size: 16, weight: .semibold))
+                                                .alignmentGuide(.top) { _ in geometry.size.height }
+                                                .alignmentGuide(.firstTextBaseline) { _ in geometry.size.height }
+                                            
+                                            Text(content.trimmingCharacters(in: .whitespaces))
+                                                .font(.interFont(size: 16, weight: .light))
+                                                .alignmentGuide(.top) { _ in geometry.size.height }
+                                                .alignmentGuide(.lastTextBaseline) { _ in geometry.size.height }
+                                        }
+                                        .id(UUID())
+                                        .padding()
+                                        .background(Color(UIColor.systemGray6))
+                                        .cornerRadius(16)
+                                        .frame(width: geometry.size.width, alignment: .leading)
+                                    }
+                                } else {
+                                    let parts = message.split(separator: ":", maxSplits: 1)
+                                    if let name = parts.first, let content = parts.last {
+                                        HStack(alignment: .top) {
+                                            Text(name.trimmingCharacters(in: .whitespaces))
+                                                .bold() // Make the name bold
+                                                .font(.interFont(size: 16, weight: .semibold))
+                                                .alignmentGuide(.top) { _ in geometry.size.height }
+                                                .alignmentGuide(.firstTextBaseline) { _ in geometry.size.height }
+                                            
+                                            Text(content.trimmingCharacters(in: .whitespaces))
+                                                .font(.interFont(size: 16, weight: .light))
+                                                .alignmentGuide(.top) { _ in geometry.size.height }
+                                                .alignmentGuide(.lastTextBaseline) { _ in geometry.size.height }
+                                        }
+                                        .id(UUID())
+                                        .padding()
+                                        .frame(width: geometry.size.width, alignment: .leading)
+                                    }
+                                    
+                                }
+                            }
+                        }                .frame(maxHeight: .infinity)
+
                     }
                     .padding()
                     .onChange(of: conversation, perform: { _ in
@@ -192,7 +235,11 @@ struct ChatView: View {
                             }
                         }
                     })
+                    .background(Color.clear) // Clear the background color of the LazyVStack
+                    
                 }
+                .frame(maxHeight: .infinity) // Set the maxHeight to allow vertical expansion
+
             }
             .onAppear {
                 scrollToBottom = true // Scroll to the bottom on initial appearance
