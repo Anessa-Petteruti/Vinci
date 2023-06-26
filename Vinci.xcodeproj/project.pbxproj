@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F68DEF282A49E95100D0057F /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = F68DEF272A49E95100D0057F /* Alamofire */; };
 		F692CBF92A48C8E200661CE0 /* VinciApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F692CBF82A48C8E200661CE0 /* VinciApp.swift */; };
 		F692CBFB2A48C8E200661CE0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F692CBFA2A48C8E200661CE0 /* ContentView.swift */; };
 		F692CBFD2A48C8E400661CE0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F692CBFC2A48C8E400661CE0 /* Assets.xcassets */; };
@@ -34,6 +35,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F68DEF252A49CA7E00D0057F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		F692CBF52A48C8E200661CE0 /* Vinci.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vinci.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F692CBF82A48C8E200661CE0 /* VinciApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VinciApp.swift; sourceTree = "<group>"; };
 		F692CBFA2A48C8E200661CE0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -52,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F68DEF282A49E95100D0057F /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,6 +98,7 @@
 		F692CBF72A48C8E200661CE0 /* Vinci */ = {
 			isa = PBXGroup;
 			children = (
+				F68DEF252A49CA7E00D0057F /* Info.plist */,
 				F692CC232A48CFE100661CE0 /* Fonts */,
 				F692CBF82A48C8E200661CE0 /* VinciApp.swift */,
 				F692CBFA2A48C8E200661CE0 /* ContentView.swift */,
@@ -153,6 +157,9 @@
 			dependencies = (
 			);
 			name = Vinci;
+			packageProductDependencies = (
+				F68DEF272A49E95100D0057F /* Alamofire */,
+			);
 			productName = Vinci;
 			productReference = F692CBF52A48C8E200661CE0 /* Vinci.app */;
 			productType = "com.apple.product-type.application";
@@ -225,6 +232,9 @@
 				Base,
 			);
 			mainGroup = F692CBEC2A48C8E200661CE0;
+			packageReferences = (
+				F68DEF262A49E95100D0057F /* XCRemoteSwiftPackageReference "Alamofire" */,
+			);
 			productRefGroup = F692CBF62A48C8E200661CE0 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -427,6 +437,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Vinci/Info.plist;
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Explanation of why your app requires speech recognition";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -465,6 +477,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Vinci/Info.plist;
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Explanation of why your app requires speech recognition";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -620,6 +634,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F68DEF262A49E95100D0057F /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F68DEF272A49E95100D0057F /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F68DEF262A49E95100D0057F /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F692CBED2A48C8E200661CE0 /* Project object */;
 }

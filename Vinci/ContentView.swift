@@ -7,6 +7,8 @@
 
 import SwiftUI
 import AVFoundation
+import Speech
+import Alamofire
 
 struct ContentView: View {
     @State private var isSecondScreenActive = false
@@ -164,6 +166,7 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
+
 struct ChatView: View {
     @State private var conversation: [String] = []
     @State private var userInput = ""
@@ -178,9 +181,7 @@ struct ChatView: View {
                 }
                 .padding()
             }
-            
-            Divider()
-            
+                        
             HStack {
                 TextField("Enter your message", text: $userInput, onCommit: sendMessage)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -206,15 +207,61 @@ struct ChatView: View {
     }
     
     func sendMessage() {
-        conversation.append("You: \(userInput)")
-        // Here, invoke ChatGPT (and other models, if needed) to generate a response based on the user input
-        // Update the conversation array with the response received from ChatGPT
+        let userMessage = userInput
+        conversation.append("You: \(userMessage)")
+        
+        // Make a request to ChatGPT
+        let chatGPTResponse = getChatGPTResponse(userMessage: userMessage)
         
         clearTextField()
     }
     
     func clearTextField() {
         userInput = ""
+    }
+    
+    func getChatGPTResponse(userMessage: String) -> String {
+        let apiKey = "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"
+        let endpoint = "https://api.openai.com/v1/chat/completions"
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(apiKey)",
+            "Content-Type": "application/json"
+        ]
+        let parameters: Parameters = [
+            "model": "gpt-3.5-turbo",
+            "messages": [
+                ["role": "system", "content": "You are a helpful assistant."],
+                ["role": "user", "content": userMessage]
+            ]
+        ]
+        
+        AF.request(endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+            .validate()
+            .responseJSON { response in
+                switch response.result {
+                case .success(let value):
+                    if let json = value as? [String: Any],
+                       let choices = json["choices"] as? [[String: Any]],
+                       let chatGPTResponse = choices.first?["message"] as? [String: String],
+                       let content = chatGPTResponse["content"] {
+                        // Update the UI with the response from ChatGPT
+                        DispatchQueue.main.async {
+                            self.conversation.append("Vinci: \(content)")
+                        }
+                    }
+                case .failure(let error):
+                    print("Error making ChatGPT request: \(error.localizedDescription)")
+                }
+            }
+        
+        return ""  // Return an empty string for now, as the actual response will be updated asynchronously
+    }
+
+}
+
+struct ChatView_Previews: PreviewProvider {
+    static var previews: some View {
+        ChatView()
     }
 }
 
