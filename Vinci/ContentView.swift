@@ -105,20 +105,14 @@ struct SecondView: View {
 
 struct Tab1View: View {
     var body: some View {
-        VStack {
-            Text("Conversation with Vinci")
-                .font(.title)
-                .padding()
-            
-            // Add more content specific to Tab 1
-        }
+        ChatView()
     }
 }
 
 struct Tab2View: View {
     var body: some View {
-            CameraView() // Display the camera view
-        }
+        CameraView()
+    }
 }
 
 struct Tab3View: View {
@@ -132,7 +126,6 @@ struct Tab3View: View {
         }
     }
 }
-
 
 
 struct Arrow: InsettableShape {
@@ -171,6 +164,58 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
+struct ChatView: View {
+    @State private var conversation: [String] = []
+    @State private var userInput = ""
+
+    var body: some View {
+        VStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 10) {
+                    ForEach(conversation, id: \.self) { message in
+                        Text(message)
+                    }
+                }
+                .padding()
+            }
+
+            Divider()
+
+            HStack {
+                TextField("Enter your message", text: $userInput, onCommit: sendMessage)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding()
+
+                Button(action: sendMessage) {
+                    Text("Send")
+                        .padding()
+                        .foregroundColor(.white)
+                        .background(Color.black)
+                        .cornerRadius(4)
+                }
+                .padding()
+                .disabled(userInput.isEmpty)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            clearTextField()
+        }
+    }
+
+    func sendMessage() {
+        conversation.append("You: \(userInput)")
+        // Here, invoke ChatGPT (and other models, if needed) to generate a response based on the user input
+        // Update the conversation array with the response received from ChatGPT
+        
+        clearTextField()
+    }
+
+    func clearTextField() {
+        userInput = ""
+    }
+}
+
+
 struct CameraPreview: UIViewRepresentable {
     let previewLayer: AVCaptureVideoPreviewLayer
     
@@ -204,8 +249,10 @@ struct CameraView: View {
             }
         }
         .onAppear {
-            setupCamera()
-            startCamera()
+            DispatchQueue.global(qos: .background).async {
+                setupCamera()
+                startCamera()
+            }
         }
         .onDisappear {
             stopCamera()
@@ -234,14 +281,19 @@ struct CameraView: View {
     
     private func startCamera() {
         session.startRunning()
-        isCameraActive = true
+        DispatchQueue.main.async {
+            isCameraActive = true
+        }
     }
     
     private func stopCamera() {
         session.stopRunning()
-        isCameraActive = false
+        DispatchQueue.main.async {
+            isCameraActive = false
+        }
     }
 }
+
 
 
 extension Font {
