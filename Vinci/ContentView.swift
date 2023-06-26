@@ -167,26 +167,43 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 
+
 struct ChatView: View {
     @State private var conversation: [String] = []
     @State private var userInput = ""
+    @State private var scrollToBottom = true // Track whether to scroll to the bottom
     
     var body: some View {
         VStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 10) {
-                    ForEach(conversation, id: \.self) { message in
-                        Text(message)
+            ScrollViewReader { scrollView in
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 10) {
+                        ForEach(conversation, id: \.self) { message in
+                            Text(message)
+                                .id(UUID()) // Add a unique identifier for each message
+                        }
                     }
+                    .padding()
+                    .onChange(of: conversation, perform: { _ in
+                        // Scroll to the bottom when the conversation updates
+                        if scrollToBottom {
+                            withAnimation {
+                                scrollView.scrollTo(conversation.count - 1, anchor: .bottom)
+                            }
+                        }
+                    })
                 }
-                .padding()
             }
-                        
+            .onAppear {
+                scrollToBottom = true // Scroll to the bottom on initial appearance
+            }
+            
+            
             HStack {
                 TextField("Enter your message", text: $userInput, onCommit: sendMessage)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
-                    .font(.interFont(size: 16, weight: .light))
+                    .font(.system(size: 16, weight: .light))
                 
                 Button(action: sendMessage) {
                     Text("Send")
@@ -195,7 +212,7 @@ struct ChatView: View {
                         .foregroundColor(.white)
                         .background(Color.black)
                         .cornerRadius(4)
-                        .font(.interFont(size: 16, weight: .light))
+                        .font(.system(size: 16, weight: .light))
                 }
                 .padding()
                 .disabled(userInput.isEmpty)
@@ -244,9 +261,11 @@ struct ChatView: View {
                        let choices = json["choices"] as? [[String: Any]],
                        let chatGPTResponse = choices.first?["message"] as? [String: String],
                        let content = chatGPTResponse["content"] {
+                        scrollToBottom = false // Disable automatic scrolling while appending AI reply
                         // Update the UI with the response from ChatGPT
                         DispatchQueue.main.async {
                             self.conversation.append("Vinci: \(content)")
+                            scrollToBottom = true // Re-enable automatic scrolling after appending AI reply
                         }
                     }
                 case .failure(let error):
@@ -256,7 +275,14 @@ struct ChatView: View {
         
         return ""  // Return an empty string for now, as the actual response will be updated asynchronously
     }
+}
 
+struct ChatGPTResponse: Decodable {
+    struct Choice: Decodable {
+        let text: String
+    }
+    
+    let choices: [Choice]
 }
 
 struct ChatView_Previews: PreviewProvider {
@@ -264,7 +290,6 @@ struct ChatView_Previews: PreviewProvider {
         ChatView()
     }
 }
-
 
 struct CameraPreview: UIViewRepresentable {
     let previewLayer: AVCaptureVideoPreviewLayer
