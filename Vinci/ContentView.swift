@@ -167,7 +167,7 @@ struct ContentView_Previews: PreviewProvider {
 struct ChatView: View {
     @State private var conversation: [String] = []
     @State private var userInput = ""
-
+    
     var body: some View {
         VStack {
             ScrollView {
@@ -178,20 +178,23 @@ struct ChatView: View {
                 }
                 .padding()
             }
-
+            
             Divider()
-
+            
             HStack {
                 TextField("Enter your message", text: $userInput, onCommit: sendMessage)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
-
+                    .font(.interFont(size: 16, weight: .light))
+                
                 Button(action: sendMessage) {
                     Text("Send")
-                        .padding()
+                        .padding(.vertical, 6)
+                        .padding(.horizontal, 12)
                         .foregroundColor(.white)
                         .background(Color.black)
                         .cornerRadius(4)
+                        .font(.interFont(size: 16, weight: .light))
                 }
                 .padding()
                 .disabled(userInput.isEmpty)
@@ -201,7 +204,7 @@ struct ChatView: View {
             clearTextField()
         }
     }
-
+    
     func sendMessage() {
         conversation.append("You: \(userInput)")
         // Here, invoke ChatGPT (and other models, if needed) to generate a response based on the user input
@@ -209,7 +212,7 @@ struct ChatView: View {
         
         clearTextField()
     }
-
+    
     func clearTextField() {
         userInput = ""
     }
