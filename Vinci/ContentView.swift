@@ -125,40 +125,43 @@ struct Tab2View: View {
 }
 
 struct Tab3View: View {
-    @State private var llm = OpenAI()
-        @State private var agent: AgentExecutor?
-        
-    init() {
-            _agent = State(initialValue: nil)
+    var body: some View {
+        VStack {
+            Text("My artifacts, scenes, Marketplace goes here")
         }
-        
-        func initializeAgent() {
-            agent = initialize_agent(llm: llm, tools: [WeatherTool()])
-        }
-        
-        func queryWeather() {
-            Task {
-                if let agent = agent {
-                    print(agent)
-                    let answer = await agent.run(args: "Query the weather of this week")
-                    print(answer)
-                } else {
-                    print("Agent not initialized")
-                }
-            }
-        }
-        
-        var body: some View {
-            VStack {
-                Button("Initialize Agent") {
-                    initializeAgent()
-                }
-                
-                Button("Query Weather") {
-                    queryWeather()
-                }
-            }
-        }
+    }
+//    @State private var llm = OpenAI()
+//    @State private var agent: AgentExecutor?
+//
+//    init() {
+//            _agent = State(initialValue: nil)
+//        }
+//
+//        func initializeAgent() {
+//            agent = initialize_agent(llm: llm, tools: [WeatherTool()])
+//        }
+//
+//        func queryWeather() {
+//            Task {
+//                if let agent = agent {
+//                    let answer = await agent.run(args: "Query the weather of this week")
+//                } else {
+//                    print("Agent not initialized")
+//                }
+//            }
+//        }
+//
+//        var body: some View {
+//            VStack {
+//                Button("Initialize Agent") {
+//                    initializeAgent()
+//                }
+//
+//                Button("Query Weather") {
+//                    queryWeather()
+//                }
+//            }
+//        }
 }
 
 
@@ -485,7 +488,6 @@ class SampleBufferDelegate: NSObject, AVCaptureVideoDataOutputSampleBufferDelega
         model = try! YOLOv3(configuration: MLModelConfiguration())
         visionModel = try! VNCoreMLModel(for: model.model)
         super.init()
-        print("DETECTED", detectedObjects)
 
     }
 
