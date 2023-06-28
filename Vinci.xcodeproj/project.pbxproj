@@ -18,6 +18,7 @@
 		F6A7DBCE2A4C8E7A0094EC55 /* Detector.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A7DBCD2A4C8E7A0094EC55 /* Detector.swift */; };
 		F6A7DBD02A4C8E990094EC55 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A7DBCF2A4C8E990094EC55 /* ViewController.swift */; };
 		F6A7DBD82A4C960E0094EC55 /* YOLOv3.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F6A7DBD72A4C960E0094EC55 /* YOLOv3.mlmodel */; };
+		F6A7DBDB2A4CD9180094EC55 /* LangChain in Frameworks */ = {isa = PBXBuildFile; productRef = F6A7DBDA2A4CD9180094EC55 /* LangChain */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6A7DBDB2A4CD9180094EC55 /* LangChain in Frameworks */,
 				F68DEF282A49E95100D0057F /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -168,6 +170,7 @@
 			name = Vinci;
 			packageProductDependencies = (
 				F68DEF272A49E95100D0057F /* Alamofire */,
+				F6A7DBDA2A4CD9180094EC55 /* LangChain */,
 			);
 			productName = Vinci;
 			productReference = F692CBF52A48C8E200661CE0 /* Vinci.app */;
@@ -243,6 +246,7 @@
 			mainGroup = F692CBEC2A48C8E200661CE0;
 			packageReferences = (
 				F68DEF262A49E95100D0057F /* XCRemoteSwiftPackageReference "Alamofire" */,
+				F6A7DBD92A4CD9180094EC55 /* XCRemoteSwiftPackageReference "langchain-swift" */,
 			);
 			productRefGroup = F692CBF62A48C8E200661CE0 /* Products */;
 			projectDirPath = "";
@@ -658,6 +662,14 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		F6A7DBD92A4CD9180094EC55 /* XCRemoteSwiftPackageReference "langchain-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/buhe/langchain-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -665,6 +677,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F68DEF262A49E95100D0057F /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		F6A7DBDA2A4CD9180094EC55 /* LangChain */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F6A7DBD92A4CD9180094EC55 /* XCRemoteSwiftPackageReference "langchain-swift" */;
+			productName = LangChain;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

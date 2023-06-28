@@ -11,9 +11,13 @@ import Speech
 import Alamofire
 import CoreML
 import Vision
+import os.log
+import LangChain
 
 struct ContentView: View {
     @State private var isSecondScreenActive = false
+    
+
     
     var body: some View {
         NavigationView {
@@ -114,9 +118,6 @@ struct Tab1View: View {
 }
 
 struct Tab2View: View {
-//    var body: some View {
-//        CameraView()
-//    }
     var body: some View {
             HostedViewController()
                 .ignoresSafeArea()
@@ -124,16 +125,40 @@ struct Tab2View: View {
 }
 
 struct Tab3View: View {
-    var body: some View {
-        VStack {
-            Text("My artifacts, scenes, profile")
-                .font(.title)
-                .padding()
-            
-            // Add more content specific to Tab 3
-            // Marketplace goes here
+    @State private var llm = OpenAI()
+        @State private var agent: AgentExecutor?
+        
+    init() {
+            _agent = State(initialValue: nil)
         }
-    }
+        
+        func initializeAgent() {
+            agent = initialize_agent(llm: llm, tools: [WeatherTool()])
+        }
+        
+        func queryWeather() {
+            Task {
+                if let agent = agent {
+                    print(agent)
+                    let answer = await agent.run(args: "Query the weather of this week")
+                    print(answer)
+                } else {
+                    print("Agent not initialized")
+                }
+            }
+        }
+        
+        var body: some View {
+            VStack {
+                Button("Initialize Agent") {
+                    initializeAgent()
+                }
+                
+                Button("Query Weather") {
+                    queryWeather()
+                }
+            }
+        }
 }
 
 
@@ -333,91 +358,6 @@ struct ChatView_Previews: PreviewProvider {
     }
 }
 
-//struct CameraPreview: UIViewRepresentable {
-//    var previewLayer: AVCaptureVideoPreviewLayer
-//
-//    func makeUIView(context: Context) -> UIView {
-//        let view = UIView(frame: CGRect.zero)
-//        previewLayer.frame = view.layer.bounds
-//        view.layer.addSublayer(previewLayer)
-//        print("HERE!!!")
-//        return view
-//    }
-//
-//    func updateUIView(_ uiView: UIView, context: Context) {
-//        previewLayer.frame = uiView.layer.bounds
-//    }
-//}
-//
-//
-//struct CameraView: View {
-//    @State private var isCameraActive = false
-//    private let session = AVCaptureSession()
-//    private let previewLayer = AVCaptureVideoPreviewLayer()
-//
-//    var body: some View {
-//        VStack {
-//            if isCameraActive {
-//                // Display the camera preview
-//                CameraPreview(previewLayer: previewLayer)
-//                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-//                Text("Camera Active")
-//                    .font(.title)
-//                    .padding()
-//            } else {
-//                // Show a placeholder or alternative content when the camera is inactive
-//                Text("Camera Inactive")
-//                    .font(.title)
-//                    .padding()
-//            }
-//        }
-//        .onAppear {
-//            DispatchQueue.global(qos: .background).async {
-//                setupCamera()
-//                startCamera()
-//            }
-//        }
-//        .onDisappear {
-//            stopCamera()
-//        }
-//    }
-//
-//    private func setupCamera() {
-//        guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
-//            print("Unable to access camera")
-//            return
-//        }
-//
-//        do {
-//            let input = try AVCaptureDeviceInput(device: device)
-//            session.beginConfiguration()
-//            if session.canAddInput(input) {
-//                session.addInput(input)
-//            }
-//            session.commitConfiguration()
-//
-//            previewLayer.session = session
-//            previewLayer.videoGravity = .resizeAspectFill
-//        } catch {
-//            print("Error setting up camera: \(error.localizedDescription)")
-//        }
-//    }
-//
-//    private func startCamera() {
-//        session.startRunning()
-//        DispatchQueue.main.async {
-//            isCameraActive = true
-//        }
-//    }
-//
-//    private func stopCamera() {
-//        session.stopRunning()
-//        DispatchQueue.main.async {
-//            isCameraActive = false
-//        }
-//    }
-//}
-
 struct CameraView: View {
     @State private var isCameraActive = false
     @State private var detectedObjects: [String] = []
@@ -432,6 +372,7 @@ struct CameraView: View {
                 CameraPreview(previewLayer: previewLayer)
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
 
+                
                 if !detectedObjects.isEmpty {
                     VStack {
                         Text("Detected Objects")
@@ -522,10 +463,12 @@ struct CameraView: View {
         // Set the sample buffer delegate
         let delegate = SampleBufferDelegate(detectedObjects: $detectedObjects)
         videoOutput.setSampleBufferDelegate(delegate, queue: DispatchQueue.global(qos: .default))
+
         
         // Configure the video connection orientation
         let videoConnection = videoOutput.connection(with: .video)
         videoConnection?.videoOrientation = .portrait
+        
     }
 
 
@@ -542,6 +485,8 @@ class SampleBufferDelegate: NSObject, AVCaptureVideoDataOutputSampleBufferDelega
         model = try! YOLOv3(configuration: MLModelConfiguration())
         visionModel = try! VNCoreMLModel(for: model.model)
         super.init()
+        print("DETECTED", detectedObjects)
+
     }
 
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
@@ -561,6 +506,7 @@ class SampleBufferDelegate: NSObject, AVCaptureVideoDataOutputSampleBufferDelega
             return
         }
 
+
         let request = VNCoreMLRequest(model: visionModel, completionHandler: { [weak self] request, error in
             guard let results = request.results as? [VNRecognizedObjectObservation] else {
                 print("Failed to process image with YOLOv3 model: \(error?.localizedDescription ?? "")")
@@ -571,10 +517,12 @@ class SampleBufferDelegate: NSObject, AVCaptureVideoDataOutputSampleBufferDelega
             let objects = results.map { observation in
                 return observation.labels[0].identifier
             }
-            self?.detectedObjects = objects
+
+            
         })
 
         try? VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:]).perform([request])
+        
     }
 }
 

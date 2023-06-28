@@ -42,15 +42,38 @@ extension ViewController {
         for observation in results where observation is VNRecognizedObjectObservation {
             guard let objectObservation = observation as? VNRecognizedObjectObservation else { continue }
             
+            // Get the recognized object label and confidence
+            let recognizedObject = objectObservation.labels[0].identifier
+            let confidence = objectObservation.labels[0].confidence
+            
             // Transformations
             let objectBounds = VNImageRectForNormalizedRect(objectObservation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
             let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
             
             let boxLayer = self.drawBoundingBox(transformedBounds)
-
+            
+            // Add label and confidence text to the box layer
+            let labelLayer = self.createLabelLayer(recognizedObject, confidence)
+            boxLayer.addSublayer(labelLayer)
+            
             detectionLayer.addSublayer(boxLayer)
         }
     }
+
+    func createLabelLayer(_ object: String, _ confidence: VNConfidence) -> CATextLayer {
+        let labelLayer = CATextLayer()
+        labelLayer.string = "\(object) (\(String(format: "%.2f", confidence * 100))%)"
+        labelLayer.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+        labelLayer.fontSize = 16
+        labelLayer.foregroundColor = UIColor.white.cgColor
+        labelLayer.backgroundColor = UIColor.black.withAlphaComponent(0.7).cgColor
+        labelLayer.alignmentMode = .center
+        labelLayer.frame = CGRect(x: 0, y: 0, width: 200, height: 30)
+        labelLayer.position = CGPoint(x: 0.5 * labelLayer.frame.width, y: 0.5 * labelLayer.frame.height)
+        
+        return labelLayer
+    }
+
     
     func setupLayers() {
         detectionLayer = CALayer()
