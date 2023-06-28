@@ -17,6 +17,7 @@
 		F692CC172A48C8E400661CE0 /* VinciUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F692CC162A48C8E400661CE0 /* VinciUITestsLaunchTests.swift */; };
 		F6A7DBCE2A4C8E7A0094EC55 /* Detector.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A7DBCD2A4C8E7A0094EC55 /* Detector.swift */; };
 		F6A7DBD02A4C8E990094EC55 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A7DBCF2A4C8E990094EC55 /* ViewController.swift */; };
+		F6A7DBD82A4C960E0094EC55 /* YOLOv3.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F6A7DBD72A4C960E0094EC55 /* YOLOv3.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,7 @@
 		F692CC162A48C8E400661CE0 /* VinciUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VinciUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		F6A7DBCD2A4C8E7A0094EC55 /* Detector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Detector.swift; sourceTree = "<group>"; };
 		F6A7DBCF2A4C8E990094EC55 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		F6A7DBD72A4C960E0094EC55 /* YOLOv3.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = YOLOv3.mlmodel; path = ../../../Downloads/YOLOv3.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +113,7 @@
 				F692CBFF2A48C8E400661CE0 /* Preview Content */,
 				F6A7DBCD2A4C8E7A0094EC55 /* Detector.swift */,
 				F6A7DBCF2A4C8E990094EC55 /* ViewController.swift */,
+				F6A7DBD72A4C960E0094EC55 /* YOLOv3.mlmodel */,
 			);
 			path = Vinci;
 			sourceTree = "<group>";
@@ -283,6 +286,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6A7DBD82A4C960E0094EC55 /* YOLOv3.mlmodel in Sources */,
 				F692CBFB2A48C8E200661CE0 /* ContentView.swift in Sources */,
 				F692CBF92A48C8E200661CE0 /* VinciApp.swift in Sources */,
 				F6A7DBD02A4C8E990094EC55 /* ViewController.swift in Sources */,
