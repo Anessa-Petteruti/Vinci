@@ -554,6 +554,47 @@ class SampleBufferDelegate: NSObject, AVCaptureVideoDataOutputSampleBufferDelega
     }
 }
 
+extension UIImage {
+    func pixelBuffer() -> CVPixelBuffer? {
+        let width = Int(size.width)
+        let height = Int(size.height)
+
+        var pixelBuffer: CVPixelBuffer?
+        let status = CVPixelBufferCreate(
+            kCFAllocatorDefault,
+            width,
+            height,
+            kCVPixelFormatType_32BGRA,
+            nil,
+            &pixelBuffer
+        )
+
+        guard let buffer = pixelBuffer, status == kCVReturnSuccess else {
+            return nil
+        }
+
+        CVPixelBufferLockBaseAddress(buffer, CVPixelBufferLockFlags(rawValue: 0))
+        let context = CGContext(
+            data: CVPixelBufferGetBaseAddress(buffer),
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bytesPerRow: CVPixelBufferGetBytesPerRow(buffer),
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue
+        )
+
+        guard let cgImage = cgImage, let cgContext = context else {
+            return nil
+        }
+
+        cgContext.draw(cgImage, in: CGRect(origin: .zero, size: size))
+        CVPixelBufferUnlockBaseAddress(buffer, CVPixelBufferLockFlags(rawValue: 0))
+
+        return buffer
+    }
+}
+
 struct CameraPreview: UIViewRepresentable {
     let previewLayer: AVCaptureVideoPreviewLayer
     
