@@ -1,5 +1,7 @@
 
 
+// need to define TextResponseTool() and BoundingBoxTool()
+
 let query = "please point out the water bottle"
 
 let agent = initialize_agent(llm: llm, tools: [TextResponseTool(), BoundingBoxTool()])
