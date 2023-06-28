@@ -114,9 +114,13 @@ struct Tab1View: View {
 }
 
 struct Tab2View: View {
+//    var body: some View {
+//        CameraView()
+//    }
     var body: some View {
-        CameraView()
-    }
+            HostedViewController()
+                .ignoresSafeArea()
+        }
 }
 
 struct Tab3View: View {
@@ -127,7 +131,6 @@ struct Tab3View: View {
                 .padding()
             
             // Add more content specific to Tab 3
-            // comment
         }
     }
 }
@@ -455,9 +458,10 @@ struct CameraView: View {
         .onDisappear {
             stopCamera()
         }
-        .onReceive(NotificationCenter.default.publisher(for: .AVCaptureOutputReceived)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .AVCaptureSessionDidStartRunning)) { _ in
             performObjectRecognition()
         }
+        
     }
 
     private func setupCamera() {
@@ -496,24 +500,47 @@ struct CameraView: View {
     }
 
     private func performObjectRecognition() {
-        guard let captureOutput = session.outputs.first as? AVCaptureVideoDataOutput else {
-            print("Unable to access video data output")
+        session.beginConfiguration()
+        
+        // Remove any existing video data outputs
+        for output in session.outputs {
+            session.removeOutput(output)
+        }
+        
+        // Add a new video data output
+        let videoOutput = AVCaptureVideoDataOutput()
+        if session.canAddOutput(videoOutput) {
+            session.addOutput(videoOutput)
+        } else {
+            print("Unable to add video data output to the session")
             return
         }
-
-        let videoConnection = captureOutput.connection(with: .video)
-        videoConnection?.videoOrientation = .portrait
-
+        
+        session.commitConfiguration()
+        
+        // Set the sample buffer delegate
         let delegate = SampleBufferDelegate(detectedObjects: $detectedObjects)
-        captureOutput.setSampleBufferDelegate(delegate, queue: DispatchQueue.global(qos: .default))
+        videoOutput.setSampleBufferDelegate(delegate, queue: DispatchQueue.global(qos: .default))
+        
+        // Configure the video connection orientation
+        let videoConnection = videoOutput.connection(with: .video)
+        videoConnection?.videoOrientation = .portrait
     }
+
+
+
 }
 
 class SampleBufferDelegate: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     @Binding var detectedObjects: [String]
+    let model: YOLOv3
+    let visionModel: VNCoreMLModel
 
     init(detectedObjects: Binding<[String]>) {
         _detectedObjects = detectedObjects
+        model = try! YOLOv3(configuration: MLModelConfiguration())
+        visionModel = try! VNCoreMLModel(for: model.model)
+        super.init()
     }
 
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
@@ -528,17 +555,12 @@ class SampleBufferDelegate: NSObject, AVCaptureVideoDataOutputSampleBufferDelega
     }
 
     private func processImage(_ image: UIImage) {
-        guard let model = try? YOLOv3(configuration: MLModelConfiguration()) else {
-            print("Unable to load YOLOv3 model")
-            return
-        }
-
         guard let pixelBuffer = image.pixelBuffer() else {
             print("Unable to create pixel buffer from image")
             return
         }
 
-        let request = VNCoreMLRequest(model: model) { [weak self] request, error in
+        let request = VNCoreMLRequest(model: visionModel, completionHandler: { [weak self] request, error in
             guard let results = request.results as? [VNRecognizedObjectObservation] else {
                 print("Failed to process image with YOLOv3 model: \(error?.localizedDescription ?? "")")
                 return
@@ -549,11 +571,12 @@ class SampleBufferDelegate: NSObject, AVCaptureVideoDataOutputSampleBufferDelega
                 return observation.labels[0].identifier
             }
             self?.detectedObjects = objects
-        }
+        })
 
         try? VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:]).perform([request])
     }
 }
+
 
 extension UIImage {
     func pixelBuffer() -> CVPixelBuffer? {
@@ -603,6 +626,7 @@ struct CameraPreview: UIViewRepresentable {
         let view = UIView(frame: CGRect.zero)
         previewLayer.frame = view.bounds
         view.layer.addSublayer(previewLayer)
+        print(view)
         return view
     }
     
