@@ -438,6 +438,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Vinci/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app uses the camera to capture photos for image recognition purposes.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Explanation of why your app requires speech recognition";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -478,6 +479,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Vinci/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app uses the camera to capture photos for image recognition purposes.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Explanation of why your app requires speech recognition";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
