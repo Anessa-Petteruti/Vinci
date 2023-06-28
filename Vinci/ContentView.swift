@@ -327,32 +327,38 @@ struct ChatView_Previews: PreviewProvider {
 }
 
 struct CameraPreview: UIViewRepresentable {
-    let previewLayer: AVCaptureVideoPreviewLayer
-    
+    var previewLayer: AVCaptureVideoPreviewLayer
+
     func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        previewLayer.videoGravity = .resizeAspectFill
+        let view = UIView(frame: CGRect.zero)
+        previewLayer.frame = view.layer.bounds
         view.layer.addSublayer(previewLayer)
+        print("HERE!!!")
         return view
     }
-    
+
     func updateUIView(_ uiView: UIView, context: Context) {
-        previewLayer.frame = uiView.bounds
+        previewLayer.frame = uiView.layer.bounds
     }
 }
+
 
 struct CameraView: View {
     @State private var isCameraActive = false
     private let session = AVCaptureSession()
     private let previewLayer = AVCaptureVideoPreviewLayer()
-    
+
     var body: some View {
         VStack {
             if isCameraActive {
                 // Display the camera preview
                 CameraPreview(previewLayer: previewLayer)
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                Text("Camera Active")
+                    .font(.title)
+                    .padding()
             } else {
-                // Show a placeholder or alternative content when camera is inactive
+                // Show a placeholder or alternative content when the camera is inactive
                 Text("Camera Inactive")
                     .font(.title)
                     .padding()
@@ -368,13 +374,13 @@ struct CameraView: View {
             stopCamera()
         }
     }
-    
+
     private func setupCamera() {
         guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
             print("Unable to access camera")
             return
         }
-        
+
         do {
             let input = try AVCaptureDeviceInput(device: device)
             session.beginConfiguration()
@@ -382,20 +388,21 @@ struct CameraView: View {
                 session.addInput(input)
             }
             session.commitConfiguration()
-            
+
             previewLayer.session = session
+            previewLayer.videoGravity = .resizeAspectFill
         } catch {
             print("Error setting up camera: \(error.localizedDescription)")
         }
     }
-    
+
     private func startCamera() {
         session.startRunning()
         DispatchQueue.main.async {
             isCameraActive = true
         }
     }
-    
+
     private func stopCamera() {
         session.stopRunning()
         DispatchQueue.main.async {
