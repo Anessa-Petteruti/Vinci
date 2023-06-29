@@ -55,7 +55,7 @@ struct ContentView: View {
             .padding()
             .background(
                 NavigationLink(
-                    destination: SecondView(),
+                    destination: SecondView(selectedTab: 1),
                     isActive: $isSecondScreenActive,
                     label: {
                         EmptyView()
@@ -70,6 +70,10 @@ struct ContentView: View {
 
 struct SecondView: View {
     @State private var selectedTab = 1
+    
+    init(selectedTab: Int) {
+            self._selectedTab = State(initialValue: selectedTab)
+        }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -304,15 +308,22 @@ struct ChatView: View {
         }
         .background(
             NavigationLink(
-                destination: VStack{HostedViewController().ignoresSafeArea()},
+                destination: SecondView(selectedTab: 2),
                 isActive: $isCameraViewActive,
                 label: {
                     EmptyView()
                 }
             )
             .hidden()
+//            .onChange(of: 2) { _ in
+//                    DispatchQueue.main.async {
+//                        self.view.layer.bringSubviewToFront(detectionLayer)
+//                    }
+//                }
         )
+        
     }
+        
     
     func sendMessage() {
         let userMessage = userInput
@@ -394,28 +405,6 @@ struct ChatView_Previews: PreviewProvider {
     }
 }
 
-struct BoundingBoxOverlay: View {
-    let detectedObjects: [String]
-    let boundingBoxColor: Color
-    let frameSize: CGSize
-    
-    var body: some View {
-        ForEach(detectedObjects, id: \.self) { rect in
-            Rectangle()
-                .stroke(boundingBoxColor, lineWidth: 2)
-                .frame(
-                    width: rect.size.width * frameSize.width,
-                    height: rect.size.height * frameSize.height
-                )
-                .position(
-                    x: rect.midX * frameSize.width,
-                    y: (1 - rect.midY) * frameSize.height
-                )
-        }
-    }
-}
-
-
 // Replace detectedObjects calls with highlightedObjects global var
 struct CameraView: View {
     @State private var isCameraActive = false
@@ -430,12 +419,7 @@ struct CameraView: View {
                 // Display the camera preview
                 CameraPreview(previewLayer: previewLayer)
                                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                                .overlay(
-                                    GeometryReader { geometry in
-                                        BoundingBoxOverlay(detectedObjects: detectedObjects, boundingBoxColor: .green, frameSize: geometry.size)
-                                    }
-                                )
-                
+
                 
                 if !detectedObjects.isEmpty {
                     VStack {

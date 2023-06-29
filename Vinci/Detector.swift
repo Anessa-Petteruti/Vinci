@@ -79,7 +79,10 @@ extension ViewController {
         detectionLayer = CALayer()
         detectionLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
         self.view.layer.addSublayer(detectionLayer)
+        self.view.layer.insertSublayer(detectionLayer, at: UInt32(self.view.layer.sublayers?.count ?? 0))
     }
+
+
     
     func updateLayers() {
         detectionLayer?.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
