@@ -15,6 +15,7 @@ import os.log
 import LangChain
 
 // TO DO: Define global var that will be a list of strings (highlightedObjects)
+var highlightedObjects: [String] = []
 
 struct ContentView: View {
     @State private var isSecondScreenActive = false
@@ -121,51 +122,53 @@ struct Tab1View: View {
 
 struct Tab2View: View {
     var body: some View {
-        HostedViewController()
-            .ignoresSafeArea()
+        VStack{
+            HostedViewController()
+                .ignoresSafeArea()
+        }
     }
 }
 
 struct Tab3View: View {
-        var body: some View {
-            VStack {
-                Text("My artifacts, scenes, Marketplace goes here")
-            }
+    var body: some View {
+        VStack {
+            Text("My artifacts, scenes, Marketplace goes here")
         }
-//
-//    @State private var llm = OpenAI()
-//    @State private var agent: AgentExecutor?
-//
-//
-//    init() {
-//        _agent = State(initialValue: nil)
-//    }
-//
-//    func initializeAgent() {
-//        agent = initialize_agent(llm: llm, tools: [WeatherTool()])
-//    }
-//
-//    func queryWeather() {
-//        Task {
-//            if let agent = agent {
-//                let answer = await agent.run(args: "Query the weather of this week in East Greenwich, Rhode Island")
-//            } else {
-//                print("Agent not initialized")
-//            }
-//        }
-//    }
-//
-//    var body: some View {
-//        VStack {
-//            Button("Initialize Agent") {
-//                initializeAgent()
-//            }
-//
-//            Button("Query Weather") {
-//                queryWeather()
-//            }
-//        }
-//    }
+    }
+    //
+    //    @State private var llm = OpenAI()
+    //    @State private var agent: AgentExecutor?
+    //
+    //
+    //    init() {
+    //        _agent = State(initialValue: nil)
+    //    }
+    //
+    //    func initializeAgent() {
+    //        agent = initialize_agent(llm: llm, tools: [WeatherTool()])
+    //    }
+    //
+    //    func queryWeather() {
+    //        Task {
+    //            if let agent = agent {
+    //                let answer = await agent.run(args: "Query the weather of this week in East Greenwich, Rhode Island")
+    //            } else {
+    //                print("Agent not initialized")
+    //            }
+    //        }
+    //    }
+    //
+    //    var body: some View {
+    //        VStack {
+    //            Button("Initialize Agent") {
+    //                initializeAgent()
+    //            }
+    //
+    //            Button("Query Weather") {
+    //                queryWeather()
+    //            }
+    //        }
+    //    }
 }
 
 
@@ -211,6 +214,10 @@ struct ChatView: View {
     @State private var conversation: [String] = []
     @State private var userInput = ""
     @State private var scrollToBottom = true // Track whether to scroll to the bottom
+    
+    // TO DO: variable to determine whether CameraView is active:
+    @State private var isCameraViewActive = false
+    
     
     var body: some View {
         VStack {
@@ -295,6 +302,16 @@ struct ChatView: View {
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
             clearTextField()
         }
+        .background(
+            NavigationLink(
+                destination: VStack{HostedViewController().ignoresSafeArea()},
+                isActive: $isCameraViewActive,
+                label: {
+                    EmptyView()
+                }
+            )
+            .hidden()
+        )
     }
     
     func sendMessage() {
@@ -329,6 +346,14 @@ struct ChatView: View {
         // TO DO:
         // If the userMessage == those questions
         // navigate to Camera View
+        if (userMessage == "Can you find my bottle") {
+            print(userMessage)
+            print("HERE")
+            isCameraViewActive = true
+            //            DispatchQueue.global(qos: .background).async {
+            //                isCameraViewActive = true
+            //            }
+        }
         
         AF.request(endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             .validate()
@@ -369,6 +394,28 @@ struct ChatView_Previews: PreviewProvider {
     }
 }
 
+struct BoundingBoxOverlay: View {
+    let detectedObjects: [String]
+    let boundingBoxColor: Color
+    let frameSize: CGSize
+    
+    var body: some View {
+        ForEach(detectedObjects, id: \.self) { rect in
+            Rectangle()
+                .stroke(boundingBoxColor, lineWidth: 2)
+                .frame(
+                    width: rect.size.width * frameSize.width,
+                    height: rect.size.height * frameSize.height
+                )
+                .position(
+                    x: rect.midX * frameSize.width,
+                    y: (1 - rect.midY) * frameSize.height
+                )
+        }
+    }
+}
+
+
 // Replace detectedObjects calls with highlightedObjects global var
 struct CameraView: View {
     @State private var isCameraActive = false
@@ -382,7 +429,12 @@ struct CameraView: View {
             if isCameraActive {
                 // Display the camera preview
                 CameraPreview(previewLayer: previewLayer)
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                                .overlay(
+                                    GeometryReader { geometry in
+                                        BoundingBoxOverlay(detectedObjects: detectedObjects, boundingBoxColor: .green, frameSize: geometry.size)
+                                    }
+                                )
                 
                 
                 if !detectedObjects.isEmpty {
