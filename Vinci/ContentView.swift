@@ -71,8 +71,8 @@ struct SecondView: View {
     @State private var selectedTab = 1
     
     init(selectedTab: Int) {
-            self._selectedTab = State(initialValue: selectedTab)
-        }
+        self._selectedTab = State(initialValue: selectedTab)
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -314,15 +314,15 @@ struct ChatView: View {
                 }
             )
             .hidden()
-//            .onChange(of: 2) { _ in
-//                    DispatchQueue.main.async {
-//                        self.view.layer.bringSubviewToFront(detectionLayer)
-//                    }
-//                }
+            //            .onChange(of: 2) { _ in
+            //                    DispatchQueue.main.async {
+            //                        self.view.layer.bringSubviewToFront(detectionLayer)
+            //                    }
+            //                }
         )
         
     }
-        
+    
     
     func sendMessage() {
         let userMessage = userInput
@@ -353,17 +353,18 @@ struct ChatView: View {
             ]
         ]
         
-        // TO DO:
+        // TO DO: TOOL GOES HERE
         // If the userMessage == those questions
         // navigate to Camera View
         if (userMessage == "Can you find my bottle") {
             print(userMessage)
-            print("HERE")
             isCameraViewActive = true
             highlightedObjects = ["bottle"]
-            //            DispatchQueue.global(qos: .background).async {
-            //                isCameraViewActive = true
-            //            }
+        }
+        if (userMessage == "Can you find my tvmonitor") {
+            print(userMessage)
+            isCameraViewActive = true
+            highlightedObjects = ["tvmonitor"]
         }
         
         AF.request(endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
@@ -408,7 +409,7 @@ struct ChatView_Previews: PreviewProvider {
 struct CameraView: View {
     @State private var isCameraActive = false
     @State private var detectedObjects: [String] = []
-    @State private var highlightedObjectsScope: [String] = ["bottle"]
+    @State private var highlightedObjectsScope: [String] = []
     
     private let session = AVCaptureSession()
     private let previewLayer = AVCaptureVideoPreviewLayer()
@@ -418,8 +419,8 @@ struct CameraView: View {
             if isCameraActive {
                 // Display the camera preview
                 CameraPreview(previewLayer: previewLayer)
-                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                
                 
                 if !detectedObjects.isEmpty {
                     VStack {
