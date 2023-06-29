@@ -14,7 +14,6 @@ import Vision
 import os.log
 import LangChain
 
-// TO DO: Define global var that will be a list of strings (highlightedObjects)
 var highlightedObjects: [String] = []
 
 struct ContentView: View {
@@ -406,10 +405,10 @@ struct ChatView_Previews: PreviewProvider {
     }
 }
 
-// Replace detectedObjects calls with highlightedObjects global var
 struct CameraView: View {
     @State private var isCameraActive = false
     @State private var detectedObjects: [String] = []
+    @State private var highlightedObjectsScope: [String] = ["bottle"]
     
     private let session = AVCaptureSession()
     private let previewLayer = AVCaptureVideoPreviewLayer()
@@ -508,6 +507,8 @@ struct CameraView: View {
         }
         
         session.commitConfiguration()
+        
+        print("WHAT ARE THE OBJECTS OF INTEREST", highlightedObjectsScope)
         
         // Set the sample buffer delegate
         let delegate = SampleBufferDelegate(detectedObjects: $detectedObjects)

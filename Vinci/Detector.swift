@@ -46,6 +46,11 @@ extension ViewController {
             let recognizedObject = objectObservation.labels[0].identifier
             let confidence = objectObservation.labels[0].confidence
             
+            print(recognizedObject)
+            
+            // TO DO: Check if recognizedObject is object of interest, and if it is, add the rest of the code in this function inside that if statement, else do nothing (account for errors)
+            
+            
             // Transformations
             let objectBounds = VNImageRectForNormalizedRect(objectObservation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
             let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
