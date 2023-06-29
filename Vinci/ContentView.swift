@@ -361,6 +361,7 @@ struct ChatView: View {
             print(userMessage)
             print("HERE")
             isCameraViewActive = true
+            highlightedObjects = ["bottle"]
             //            DispatchQueue.global(qos: .background).async {
             //                isCameraViewActive = true
             //            }
