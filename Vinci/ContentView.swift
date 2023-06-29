@@ -14,6 +14,8 @@ import Vision
 import os.log
 import LangChain
 
+// TO DO: Define global var that will be a list of strings (highlightedObjects)
+
 struct ContentView: View {
     @State private var isSecondScreenActive = false
     
@@ -125,45 +127,45 @@ struct Tab2View: View {
 }
 
 struct Tab3View: View {
-    //    var body: some View {
-    //        VStack {
-    //            Text("My artifacts, scenes, Marketplace goes here")
-    //        }
-    //    }
-    
-    @State private var llm = OpenAI()
-    @State private var agent: AgentExecutor?
-    
-    
-    init() {
-        _agent = State(initialValue: nil)
-    }
-    
-    func initializeAgent() {
-        agent = initialize_agent(llm: llm, tools: [WeatherTool()])
-    }
-    
-    func queryWeather() {
-        Task {
-            if let agent = agent {
-                let answer = await agent.run(args: "Query the weather of this week in East Greenwich, Rhode Island")
-            } else {
-                print("Agent not initialized")
+        var body: some View {
+            VStack {
+                Text("My artifacts, scenes, Marketplace goes here")
             }
         }
-    }
-    
-    var body: some View {
-        VStack {
-            Button("Initialize Agent") {
-                initializeAgent()
-            }
-            
-            Button("Query Weather") {
-                queryWeather()
-            }
-        }
-    }
+//
+//    @State private var llm = OpenAI()
+//    @State private var agent: AgentExecutor?
+//
+//
+//    init() {
+//        _agent = State(initialValue: nil)
+//    }
+//
+//    func initializeAgent() {
+//        agent = initialize_agent(llm: llm, tools: [WeatherTool()])
+//    }
+//
+//    func queryWeather() {
+//        Task {
+//            if let agent = agent {
+//                let answer = await agent.run(args: "Query the weather of this week in East Greenwich, Rhode Island")
+//            } else {
+//                print("Agent not initialized")
+//            }
+//        }
+//    }
+//
+//    var body: some View {
+//        VStack {
+//            Button("Initialize Agent") {
+//                initializeAgent()
+//            }
+//
+//            Button("Query Weather") {
+//                queryWeather()
+//            }
+//        }
+//    }
 }
 
 
@@ -324,6 +326,10 @@ struct ChatView: View {
             ]
         ]
         
+        // TO DO:
+        // If the userMessage == those questions
+        // navigate to Camera View
+        
         AF.request(endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             .validate()
             .responseJSON { response in
@@ -363,6 +369,7 @@ struct ChatView_Previews: PreviewProvider {
     }
 }
 
+// Replace detectedObjects calls with highlightedObjects global var
 struct CameraView: View {
     @State private var isCameraActive = false
     @State private var detectedObjects: [String] = []
