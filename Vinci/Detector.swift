@@ -26,7 +26,7 @@ extension ViewController {
             print("Error creating VNCoreMLModel: \(error)")
         }
     }
-
+    
     
     func detectionDidComplete(request: VNRequest, error: Error?) {
         DispatchQueue.main.async(execute: {
@@ -46,20 +46,45 @@ extension ViewController {
             let recognizedObject = objectObservation.labels[0].identifier
             let confidence = objectObservation.labels[0].confidence
             
-            // Transformations
-            let objectBounds = VNImageRectForNormalizedRect(objectObservation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
-            let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
+            //            print(recognizedObject)
             
-            let boxLayer = self.drawBoundingBox(transformedBounds)
             
-            // Add label and confidence text to the box layer
-            let labelLayer = self.createLabelLayer(recognizedObject, confidence)
-            boxLayer.addSublayer(labelLayer)
+            // If the user did not ask about a specific object, put bounding boxes around all objects in frame:
+            if (highlightedObjects.count == 0) {
+                let objectBounds = VNImageRectForNormalizedRect(objectObservation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
+                let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
+                
+                let boxLayer = self.drawBoundingBox(transformedBounds)
+                
+                // Add label and confidence text to the box layer
+                let labelLayer = self.createLabelLayer(recognizedObject, confidence)
+                boxLayer.addSublayer(labelLayer)
+                
+                detectionLayer.addSublayer(boxLayer)
+            }
+            else {
+                // Check if recognizedObject is object of interest
+                if (recognizedObject == highlightedObjects[0]) {
+                    print(highlightedObjects)
+                    // Transformations
+                    let objectBounds = VNImageRectForNormalizedRect(objectObservation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
+                    let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
+                    
+                    let boxLayer = self.drawBoundingBox(transformedBounds)
+                    
+                    // Add label and confidence text to the box layer
+                    let labelLayer = self.createLabelLayer(recognizedObject, confidence)
+                    boxLayer.addSublayer(labelLayer)
+                    
+                    detectionLayer.addSublayer(boxLayer)
+                }
+                
+            }
             
-            detectionLayer.addSublayer(boxLayer)
+            
         }
     }
-
+    
     func createLabelLayer(_ object: String, _ confidence: VNConfidence) -> CATextLayer {
         let labelLayer = CATextLayer()
         labelLayer.string = "\(object) (\(String(format: "%.2f", confidence * 100))%)"
@@ -73,13 +98,17 @@ extension ViewController {
         
         return labelLayer
     }
-
+    
     
     func setupLayers() {
         detectionLayer = CALayer()
         detectionLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
         self.view.layer.addSublayer(detectionLayer)
+        self.view.layer.insertSublayer(detectionLayer, at: UInt32(self.view.layer.sublayers?.count ?? 0))
+        detectionLayer.zPosition = CGFloat.greatestFiniteMagnitude
+        
     }
+    
     
     func updateLayers() {
         detectionLayer?.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
@@ -103,4 +132,5 @@ extension ViewController {
             print(error)
         }
     }
+    
 }

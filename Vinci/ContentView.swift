@@ -14,10 +14,12 @@ import Vision
 import os.log
 import LangChain
 
+var highlightedObjects: [String] = []
+
 struct ContentView: View {
     @State private var isSecondScreenActive = false
     
-
+    
     
     var body: some View {
         NavigationView {
@@ -52,7 +54,7 @@ struct ContentView: View {
             .padding()
             .background(
                 NavigationLink(
-                    destination: SecondView(),
+                    destination: SecondView(selectedTab: 1),
                     isActive: $isSecondScreenActive,
                     label: {
                         EmptyView()
@@ -67,6 +69,10 @@ struct ContentView: View {
 
 struct SecondView: View {
     @State private var selectedTab = 1
+    
+    init(selectedTab: Int) {
+        self._selectedTab = State(initialValue: selectedTab)
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -119,9 +125,11 @@ struct Tab1View: View {
 
 struct Tab2View: View {
     var body: some View {
+        VStack{
             HostedViewController()
                 .ignoresSafeArea()
         }
+    }
 }
 
 struct Tab3View: View {
@@ -130,38 +138,40 @@ struct Tab3View: View {
             Text("My artifacts, scenes, Marketplace goes here")
         }
     }
-//    @State private var llm = OpenAI()
-//    @State private var agent: AgentExecutor?
-//
-//    init() {
-//            _agent = State(initialValue: nil)
-//        }
-//
-//        func initializeAgent() {
-//            agent = initialize_agent(llm: llm, tools: [WeatherTool()])
-//        }
-//
-//        func queryWeather() {
-//            Task {
-//                if let agent = agent {
-//                    let answer = await agent.run(args: "Query the weather of this week")
-//                } else {
-//                    print("Agent not initialized")
-//                }
-//            }
-//        }
-//
-//        var body: some View {
-//            VStack {
-//                Button("Initialize Agent") {
-//                    initializeAgent()
-//                }
-//
-//                Button("Query Weather") {
-//                    queryWeather()
-//                }
-//            }
-//        }
+    //
+    //    @State private var llm = OpenAI()
+    //    @State private var agent: AgentExecutor?
+    //
+    //
+    //    init() {
+    //        _agent = State(initialValue: nil)
+    //    }
+    //
+    //    func initializeAgent() {
+    //        agent = initialize_agent(llm: llm, tools: [WeatherTool()])
+    //    }
+    //
+    //    func queryWeather() {
+    //        Task {
+    //            if let agent = agent {
+    //                let answer = await agent.run(args: "Query the weather of this week in East Greenwich, Rhode Island")
+    //            } else {
+    //                print("Agent not initialized")
+    //            }
+    //        }
+    //    }
+    //
+    //    var body: some View {
+    //        VStack {
+    //            Button("Initialize Agent") {
+    //                initializeAgent()
+    //            }
+    //
+    //            Button("Query Weather") {
+    //                queryWeather()
+    //            }
+    //        }
+    //    }
 }
 
 
@@ -208,6 +218,10 @@ struct ChatView: View {
     @State private var userInput = ""
     @State private var scrollToBottom = true // Track whether to scroll to the bottom
     
+    // TO DO: variable to determine whether CameraView is active:
+    @State private var isCameraViewActive = false
+    
+    
     var body: some View {
         VStack {
             ScrollViewReader { scrollView in
@@ -221,7 +235,7 @@ struct ChatView: View {
                                         Text(name.trimmingCharacters(in: .whitespaces))
                                             .bold()
                                             .font(.interFont(size: 16, weight: .semibold))
-                                                                                
+                                        
                                         Text(content.trimmingCharacters(in: .whitespaces))
                                             .font(.interFont(size: 16, weight: .light))
                                             .lineLimit(nil)
@@ -240,7 +254,7 @@ struct ChatView: View {
                                         Text(name.trimmingCharacters(in: .whitespaces))
                                             .bold()
                                             .font(.interFont(size: 16, weight: .semibold))
-                                                                                
+                                        
                                         Text(content.trimmingCharacters(in: .whitespaces))
                                             .font(.interFont(size: 16, weight: .light))
                                             .lineLimit(nil)
@@ -291,7 +305,24 @@ struct ChatView: View {
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
             clearTextField()
         }
+        .background(
+            NavigationLink(
+                destination: SecondView(selectedTab: 2),
+                isActive: $isCameraViewActive,
+                label: {
+                    EmptyView()
+                }
+            )
+            .hidden()
+            //            .onChange(of: 2) { _ in
+            //                    DispatchQueue.main.async {
+            //                        self.view.layer.bringSubviewToFront(detectionLayer)
+            //                    }
+            //                }
+        )
+        
     }
+    
     
     func sendMessage() {
         let userMessage = userInput
@@ -321,6 +352,20 @@ struct ChatView: View {
                 ["role": "user", "content": userMessage]
             ]
         ]
+        
+        // TO DO: TOOL GOES HERE
+        // If the userMessage == those questions
+        // navigate to Camera View
+        if (userMessage == "Can you find my bottle") {
+            print(userMessage)
+            isCameraViewActive = true
+            highlightedObjects = ["bottle"]
+        }
+        if (userMessage == "Can you find my tvmonitor") {
+            print(userMessage)
+            isCameraViewActive = true
+            highlightedObjects = ["tvmonitor"]
+        }
         
         AF.request(endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             .validate()
@@ -364,24 +409,25 @@ struct ChatView_Previews: PreviewProvider {
 struct CameraView: View {
     @State private var isCameraActive = false
     @State private var detectedObjects: [String] = []
-
+    @State private var highlightedObjectsScope: [String] = []
+    
     private let session = AVCaptureSession()
     private let previewLayer = AVCaptureVideoPreviewLayer()
-
+    
     var body: some View {
         VStack {
             if isCameraActive {
                 // Display the camera preview
                 CameraPreview(previewLayer: previewLayer)
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-
+                
                 
                 if !detectedObjects.isEmpty {
                     VStack {
                         Text("Detected Objects")
                             .font(.title)
                             .padding()
-
+                        
                         List(detectedObjects, id: \.self) { object in
                             Text(object)
                         }
@@ -408,13 +454,13 @@ struct CameraView: View {
         }
         
     }
-
+    
     private func setupCamera() {
         guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
             print("Unable to access camera")
             return
         }
-
+        
         do {
             let input = try AVCaptureDeviceInput(device: device)
             session.beginConfiguration()
@@ -422,28 +468,28 @@ struct CameraView: View {
                 session.addInput(input)
             }
             session.commitConfiguration()
-
+            
             previewLayer.session = session
             previewLayer.videoGravity = .resizeAspectFill
         } catch {
             print("Error setting up camera: \(error.localizedDescription)")
         }
     }
-
+    
     private func startCamera() {
         session.startRunning()
         DispatchQueue.main.async {
             isCameraActive = true
         }
     }
-
+    
     private func stopCamera() {
         session.stopRunning()
         DispatchQueue.main.async {
             isCameraActive = false
         }
     }
-
+    
     private func performObjectRecognition() {
         session.beginConfiguration()
         
@@ -463,66 +509,68 @@ struct CameraView: View {
         
         session.commitConfiguration()
         
+        print("WHAT ARE THE OBJECTS OF INTEREST", highlightedObjectsScope)
+        
         // Set the sample buffer delegate
         let delegate = SampleBufferDelegate(detectedObjects: $detectedObjects)
         videoOutput.setSampleBufferDelegate(delegate, queue: DispatchQueue.global(qos: .default))
-
+        
         
         // Configure the video connection orientation
         let videoConnection = videoOutput.connection(with: .video)
         videoConnection?.videoOrientation = .portrait
         
     }
-
-
-
+    
+    
+    
 }
 
 class SampleBufferDelegate: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     @Binding var detectedObjects: [String]
     let model: YOLOv3
     let visionModel: VNCoreMLModel
-
+    
     init(detectedObjects: Binding<[String]>) {
         _detectedObjects = detectedObjects
         model = try! YOLOv3(configuration: MLModelConfiguration())
         visionModel = try! VNCoreMLModel(for: model.model)
         super.init()
-
+        
     }
-
+    
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
             return
         }
-
+        
         let ciImage = CIImage(cvImageBuffer: imageBuffer)
         let uiImage = UIImage(ciImage: ciImage)
-
+        
         processImage(uiImage)
     }
-
+    
     private func processImage(_ image: UIImage) {
         guard let pixelBuffer = image.pixelBuffer() else {
             print("Unable to create pixel buffer from image")
             return
         }
-
-
+        
+        
         let request = VNCoreMLRequest(model: visionModel, completionHandler: { [weak self] request, error in
             guard let results = request.results as? [VNRecognizedObjectObservation] else {
                 print("Failed to process image with YOLOv3 model: \(error?.localizedDescription ?? "")")
                 return
             }
-
+            
             // Process the results
             let objects = results.map { observation in
                 return observation.labels[0].identifier
             }
-
+            
             
         })
-
+        
         try? VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:]).perform([request])
         
     }
@@ -533,7 +581,7 @@ extension UIImage {
     func pixelBuffer() -> CVPixelBuffer? {
         let width = Int(size.width)
         let height = Int(size.height)
-
+        
         var pixelBuffer: CVPixelBuffer?
         let status = CVPixelBufferCreate(
             kCFAllocatorDefault,
@@ -543,11 +591,11 @@ extension UIImage {
             nil,
             &pixelBuffer
         )
-
+        
         guard let buffer = pixelBuffer, status == kCVReturnSuccess else {
             return nil
         }
-
+        
         CVPixelBufferLockBaseAddress(buffer, CVPixelBufferLockFlags(rawValue: 0))
         let context = CGContext(
             data: CVPixelBufferGetBaseAddress(buffer),
@@ -558,14 +606,14 @@ extension UIImage {
             space: CGColorSpaceCreateDeviceRGB(),
             bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue
         )
-
+        
         guard let cgImage = cgImage, let cgContext = context else {
             return nil
         }
-
+        
         cgContext.draw(cgImage, in: CGRect(origin: .zero, size: size))
         CVPixelBufferUnlockBaseAddress(buffer, CVPixelBufferLockFlags(rawValue: 0))
-
+        
         return buffer
     }
 }
