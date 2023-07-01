@@ -333,8 +333,8 @@ struct ChatView: View {
         let userMessage = userInput
         conversation.append("You: \(userMessage)")
         
-        // ACTIVATES CAMERA BOX TOOL: - issue: activates it regardless of the question asked
-        agent = initialize_agent(llm: llm, tools: [CameraBoxTool(isCameraViewActive: $isCameraViewActive)])
+        // ACTIVATES CAMERA BOX TOOL: (put WeatherTool() in here too for now in order to determine whether the agent chooses the correct tool)
+        agent = initialize_agent(llm: llm, tools: [WeatherTool(), CameraBoxTool(isCameraViewActive: $isCameraViewActive)])
         Task {
             if let agent = agent {
                 let answer = await agent.run(args: userMessage)
@@ -418,7 +418,6 @@ struct ChatView_Previews: PreviewProvider {
 struct CameraView: View {
 //    @State private var isCameraActive = false
     @State private var detectedObjects: [String] = []
-    @State private var highlightedObjectsScope: [String] = []
     
     private let session = AVCaptureSession()
     private let previewLayer = AVCaptureVideoPreviewLayer()
@@ -517,9 +516,7 @@ struct CameraView: View {
         }
         
         session.commitConfiguration()
-        
-        print("WHAT ARE THE OBJECTS OF INTEREST", highlightedObjectsScope)
-        
+                
         // Set the sample buffer delegate
         let delegate = SampleBufferDelegate(detectedObjects: $detectedObjects)
         videoOutput.setSampleBufferDelegate(delegate, queue: DispatchQueue.global(qos: .default))

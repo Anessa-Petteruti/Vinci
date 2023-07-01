@@ -64,6 +64,7 @@ extension ViewController {
             }
             else {
                 // Check if recognizedObject is object of interest
+                // TO DO: check if recognizedObject = entities[0] from CameraBoxTool, also figure out how to account for multiple entities and not just the first one
                 if (recognizedObject == highlightedObjects[0]) {
                     print(highlightedObjects)
                     // Transformations
