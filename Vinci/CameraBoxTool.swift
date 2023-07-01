@@ -2,7 +2,7 @@ import Foundation
 import LangChain
 import SwiftUI
 
-var entities: [String] = []
+var entities: [String] = [] // might not need to use but keep just in case, replace highlightedObjects with entities naming convention
 
 // need to define TextResponseTool() and BoundingBoxTool()
 public struct CameraBoxTool: BaseTool {
