@@ -1,5 +1,5 @@
 
-import Foundation
+import Foundation 
 
 public protocol BaseTool {
     // Interface LangChain tools must implement.
