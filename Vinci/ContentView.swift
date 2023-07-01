@@ -16,6 +16,8 @@ import LangChain
 import Foundation
 
 var highlightedObjects: [String] = []
+var isCameraActive = false
+var isCameraViewActive = false
 
 struct ContentView: View {
     @State private var isSecondScreenActive = false
@@ -134,45 +136,44 @@ struct Tab2View: View {
 }
 
 struct Tab3View: View {
-//    var body: some View {
-//        VStack {
-//            Text("My artifacts, scenes, Marketplace goes here")
+    var body: some View {
+        VStack {
+            Text("My artifacts, scenes, Marketplace goes here")
+        }
+    }
+//    @State private var llm = OpenAI()
+//    @State private var agent: AgentExecutor?
+//
+//
+//    init() {
+//        _agent = State(initialValue: nil)
+//    }
+//
+//    func initializeAgent() {
+//        agent = initialize_agent(llm: llm, tools: [CameraBoxTool()])
+//    }
+//
+//    func askAgent() {
+//        Task {
+//            if let agent = agent {
+//                let answer = await agent.run(args: "Can you find my bottle")
+//            } else {
+//                print("Agent not initialized")
+//            }
 //        }
 //    }
-    
-        @State private var llm = OpenAI()
-        @State private var agent: AgentExecutor?
-    
-    
-        init() {
-            _agent = State(initialValue: nil)
-        }
-    
-        func initializeAgent() {
-            agent = initialize_agent(llm: llm, tools: [BoundingBoxTool()])
-        }
-    
-        func askAgent() {
-            Task {
-                if let agent = agent {
-                    let answer = await agent.run(args: "Query the weather of this week in East Greenwich, Rhode Island")
-                } else {
-                    print("Agent not initialized")
-                }
-            }
-        }
-    
-        var body: some View {
-            VStack {
-                Button("Initialize Agent") {
-                    initializeAgent()
-                }
-    
-                Button("Ask Bounding Box Agent") {
-                    askAgent()
-                }
-            }
-        }
+//
+//    var body: some View {
+//        VStack {
+//            Button("Initialize Agent") {
+//                initializeAgent()
+//            }
+//
+//            Button("Ask Bounding Box Agent") {
+//                askAgent()
+//            }
+//        }
+//    }
 }
 
 
@@ -221,6 +222,9 @@ struct ChatView: View {
     
     // TO DO: variable to determine whether CameraView is active:
     @State private var isCameraViewActive = false
+    
+    @State private var llm = OpenAI()
+    @State private var agent: AgentExecutor?
     
     
     var body: some View {
@@ -329,6 +333,18 @@ struct ChatView: View {
         let userMessage = userInput
         conversation.append("You: \(userMessage)")
         
+        // ACTIVATES CAMERA BOX TOOL: - issue: activates it regardless of the question asked
+        agent = initialize_agent(llm: llm, tools: [CameraBoxTool(isCameraViewActive: $isCameraViewActive)])
+        Task {
+            if let agent = agent {
+                let answer = await agent.run(args: userMessage)
+                print("ANSWER IS HEREEEE", answer)
+            } else {
+                print("Agent not initialized")
+            }
+        }
+        ///
+        
         // Make a request to ChatGPT
         let chatGPTResponse = getChatGPTResponse(userMessage: userMessage)
         
@@ -353,20 +369,12 @@ struct ChatView: View {
                 ["role": "user", "content": userMessage]
             ]
         ]
-        
-        // TO DO: TOOL GOES HERE
-        // If the userMessage == those questions
-        // navigate to Camera View
-        if (userMessage == "Can you find my bottle") {
-            print(userMessage)
-            isCameraViewActive = true
-            highlightedObjects = ["bottle"]
-        }
-        if (userMessage == "Can you find my tvmonitor") {
-            print(userMessage)
-            isCameraViewActive = true
-            highlightedObjects = ["tvmonitor"]
-        }
+                
+//        if (userMessage == "Can you find my bottle") {
+//            print(userMessage)
+//            isCameraViewActive = true
+//            highlightedObjects = ["bottle"]
+//        }
         
         AF.request(endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             .validate()
@@ -408,7 +416,7 @@ struct ChatView_Previews: PreviewProvider {
 }
 
 struct CameraView: View {
-    @State private var isCameraActive = false
+//    @State private var isCameraActive = false
     @State private var detectedObjects: [String] = []
     @State private var highlightedObjectsScope: [String] = []
     
