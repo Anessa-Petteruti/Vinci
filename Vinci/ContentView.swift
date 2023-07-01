@@ -337,8 +337,10 @@ struct ChatView: View {
         agent = initialize_agent(llm: llm, tools: [WeatherTool(), CameraBoxTool(isCameraViewActive: $isCameraViewActive)])
         Task {
             if let agent = agent {
+                print("THIS IS AGENT", agent)
                 let answer = await agent.run(args: userMessage)
                 print("ANSWER IS HEREEEE", answer)
+                
             } else {
                 print("Agent not initialized")
             }
