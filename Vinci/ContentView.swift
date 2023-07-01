@@ -13,6 +13,7 @@ import CoreML
 import Vision
 import os.log
 import LangChain
+import Foundation
 
 var highlightedObjects: [String] = []
 
@@ -133,45 +134,45 @@ struct Tab2View: View {
 }
 
 struct Tab3View: View {
-    var body: some View {
-        VStack {
-            Text("My artifacts, scenes, Marketplace goes here")
+//    var body: some View {
+//        VStack {
+//            Text("My artifacts, scenes, Marketplace goes here")
+//        }
+//    }
+    
+        @State private var llm = OpenAI()
+        @State private var agent: AgentExecutor?
+    
+    
+        init() {
+            _agent = State(initialValue: nil)
         }
-    }
-    //
-    //    @State private var llm = OpenAI()
-    //    @State private var agent: AgentExecutor?
-    //
-    //
-    //    init() {
-    //        _agent = State(initialValue: nil)
-    //    }
-    //
-    //    func initializeAgent() {
-    //        agent = initialize_agent(llm: llm, tools: [WeatherTool()])
-    //    }
-    //
-    //    func queryWeather() {
-    //        Task {
-    //            if let agent = agent {
-    //                let answer = await agent.run(args: "Query the weather of this week in East Greenwich, Rhode Island")
-    //            } else {
-    //                print("Agent not initialized")
-    //            }
-    //        }
-    //    }
-    //
-    //    var body: some View {
-    //        VStack {
-    //            Button("Initialize Agent") {
-    //                initializeAgent()
-    //            }
-    //
-    //            Button("Query Weather") {
-    //                queryWeather()
-    //            }
-    //        }
-    //    }
+    
+        func initializeAgent() {
+            agent = initialize_agent(llm: llm, tools: [BoundingBoxTool()])
+        }
+    
+        func askAgent() {
+            Task {
+                if let agent = agent {
+                    let answer = await agent.run(args: "Query the weather of this week in East Greenwich, Rhode Island")
+                } else {
+                    print("Agent not initialized")
+                }
+            }
+        }
+    
+        var body: some View {
+            VStack {
+                Button("Initialize Agent") {
+                    initializeAgent()
+                }
+    
+                Button("Ask Bounding Box Agent") {
+                    askAgent()
+                }
+            }
+        }
 }
 
 
