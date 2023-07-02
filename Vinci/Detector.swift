@@ -45,9 +45,7 @@ extension ViewController {
             // Get the recognized object label and confidence
             let recognizedObject = objectObservation.labels[0].identifier
             let confidence = objectObservation.labels[0].confidence
-            
-            //            print(recognizedObject)
-            
+                        
             
             // If the user did not ask about a specific object, put bounding boxes around all objects in frame:
             if (highlightedObjects.count == 0) {

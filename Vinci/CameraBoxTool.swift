@@ -2,8 +2,6 @@ import Foundation
 import LangChain
 import SwiftUI
 
-var entities: [String] = [] // might not need to use but keep just in case, replace highlightedObjects with entities naming convention
-
 // need to define TextResponseTool() and BoundingBoxTool()
 public struct CameraBoxTool: BaseTool {
     @Binding var isCameraViewActive: Bool
@@ -23,10 +21,6 @@ public struct CameraBoxTool: BaseTool {
     public func _run(args: String) throws -> String {
         DispatchQueue.main.async {
             isCameraViewActive = true
-            print("CAMERA ACTIVE", isCameraViewActive)
-            // TO DO:
-            // set highlightedObjects = Action Input from LangChain logs
-            // bounding box should appear automatically since CameraView in ContentView calls performObjectRecognition()
         }
         
         // Return a success message or any relevant result
