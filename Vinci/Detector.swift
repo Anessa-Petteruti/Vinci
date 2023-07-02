@@ -47,7 +47,6 @@ extension ViewController {
             let confidence = objectObservation.labels[0].confidence
                         
             
-            // If the user did not ask about a specific object, put bounding boxes around all objects in frame:
             if (highlightedObjects.count == 0) {
                 print("NO HIGHLIGHTED OBJECTS YET")
             }

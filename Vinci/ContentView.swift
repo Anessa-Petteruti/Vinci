@@ -18,6 +18,7 @@ import Foundation
 var highlightedObjects: [String] = []
 var isCameraActive = false
 var isCameraViewActive = false
+var conversation: [String] = []
 
 struct ContentView: View {
     @State private var isSecondScreenActive = false
@@ -183,7 +184,7 @@ struct ContentView_Previews: PreviewProvider {
 
 
 struct ChatView: View {
-    @State private var conversation: [String] = []
+    //    @State private var conversation: [String] = []
     @State private var userInput = ""
     @State private var scrollToBottom = true // Track whether to scroll to the bottom
     
@@ -299,10 +300,20 @@ struct ChatView: View {
         let userMessage = userInput
         conversation.append("You: \(userMessage)")
         
+        DispatchQueue.main.async {
+            userInput = ""
+        }
+        
+        // Reset highlightedObjects so it doesn't display bounding boxes of previous run
         highlightedObjects = []
+        
+        // Collapse the keyboard
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        
         
         // ACTIVATES CAMERA BOX TOOL: (put WeatherTool() in here too for now in order to determine whether the agent chooses the correct tool)
         agent = initialize_agent(llm: llm, tools: [WeatherTool(), CameraBoxTool(isCameraViewActive: $isCameraViewActive)])
+        
         Task {
             if let agent = agent {
                 let answer = await agent.run(args: userMessage)
@@ -311,7 +322,7 @@ struct ChatView: View {
                 
                 let fieldKeyword = "Action Input:"
                 var extractedInputs: [String] = []
-
+                
                 for entity in entities {
                     let actionLog = entity.0.log
                     if let range = actionLog.range(of: fieldKeyword) {
@@ -332,12 +343,11 @@ struct ChatView: View {
                         extractedInputs.append(contentsOf: filteredWords)
                     }
                 }
-
-
-                print("FINAL EXTRACTED INPUTS", extractedInputs)
-
+                
+                print("FINAL EXTRACTED ENTITIES", extractedInputs)
+                
                 highlightedObjects = extractedInputs
-
+                
                 
             } else {
                 print("Agent not initialized")
@@ -348,7 +358,6 @@ struct ChatView: View {
         // Make a request to ChatGPT
         let chatGPTResponse = getChatGPTResponse(userMessage: userMessage)
         
-        clearTextField()
     }
     
     func clearTextField() {
@@ -369,12 +378,6 @@ struct ChatView: View {
                 ["role": "user", "content": userMessage]
             ]
         ]
-                
-//        if (userMessage == "Can you find my bottle") {
-//            print(userMessage)
-//            isCameraViewActive = true
-//            highlightedObjects = ["bottle"]
-//        }
         
         AF.request(endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             .validate()
@@ -388,7 +391,7 @@ struct ChatView: View {
                         scrollToBottom = false // Disable automatic scrolling while appending AI reply
                         // Update the UI with the response from ChatGPT
                         DispatchQueue.main.async {
-                            self.conversation.append("Vinci: \(content)")
+                            conversation.append("Vinci: \(content)")
                             scrollToBottom = true // Re-enable automatic scrolling after appending AI reply
                         }
                     }
@@ -416,7 +419,7 @@ struct ChatView_Previews: PreviewProvider {
 }
 
 struct CameraView: View {
-//    @State private var isCameraActive = false
+    //    @State private var isCameraActive = false
     @State private var detectedObjects: [String] = []
     
     private let session = AVCaptureSession()
@@ -516,7 +519,7 @@ struct CameraView: View {
         }
         
         session.commitConfiguration()
-                
+        
         // Set the sample buffer delegate
         let delegate = SampleBufferDelegate(detectedObjects: $detectedObjects)
         videoOutput.setSampleBufferDelegate(delegate, queue: DispatchQueue.global(qos: .default))
