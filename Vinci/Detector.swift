@@ -49,16 +49,17 @@ extension ViewController {
             
             // If the user did not ask about a specific object, put bounding boxes around all objects in frame:
             if (highlightedObjects.count == 0) {
-                let objectBounds = VNImageRectForNormalizedRect(objectObservation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
-                let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
-                
-                let boxLayer = self.drawBoundingBox(transformedBounds)
-                
-                // Add label and confidence text to the box layer
-                let labelLayer = self.createLabelLayer(recognizedObject, confidence)
-                boxLayer.addSublayer(labelLayer)
-                
-                detectionLayer.addSublayer(boxLayer)
+                print("NO HIGHLIGHTED OBJECTS YET")
+//                let objectBounds = VNImageRectForNormalizedRect(objectObservation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
+//                let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
+//
+//                let boxLayer = self.drawBoundingBox(transformedBounds)
+//
+//                // Add label and confidence text to the box layer
+//                let labelLayer = self.createLabelLayer(recognizedObject, confidence)
+//                boxLayer.addSublayer(labelLayer)
+//
+//                detectionLayer.addSublayer(boxLayer)
             }
             else {
                 // Check if recognizedObject is object of interest

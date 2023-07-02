@@ -299,12 +299,13 @@ struct ChatView: View {
         let userMessage = userInput
         conversation.append("You: \(userMessage)")
         
+        highlightedObjects = []
+        
         // ACTIVATES CAMERA BOX TOOL: (put WeatherTool() in here too for now in order to determine whether the agent chooses the correct tool)
         agent = initialize_agent(llm: llm, tools: [WeatherTool(), CameraBoxTool(isCameraViewActive: $isCameraViewActive)])
         Task {
             if let agent = agent {
                 let answer = await agent.run(args: userMessage)
-                print("ANSWER IS HEREEEE", answer)
                 
                 let entities = agent.agent.getInputs()
                 
