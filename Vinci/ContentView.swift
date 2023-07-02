@@ -141,39 +141,6 @@ struct Tab3View: View {
             Text("My artifacts, scenes, Marketplace goes here")
         }
     }
-//    @State private var llm = OpenAI()
-//    @State private var agent: AgentExecutor?
-//
-//
-//    init() {
-//        _agent = State(initialValue: nil)
-//    }
-//
-//    func initializeAgent() {
-//        agent = initialize_agent(llm: llm, tools: [CameraBoxTool()])
-//    }
-//
-//    func askAgent() {
-//        Task {
-//            if let agent = agent {
-//                let answer = await agent.run(args: "Can you find my bottle")
-//            } else {
-//                print("Agent not initialized")
-//            }
-//        }
-//    }
-//
-//    var body: some View {
-//        VStack {
-//            Button("Initialize Agent") {
-//                initializeAgent()
-//            }
-//
-//            Button("Ask Bounding Box Agent") {
-//                askAgent()
-//            }
-//        }
-//    }
 }
 
 
@@ -220,7 +187,6 @@ struct ChatView: View {
     @State private var userInput = ""
     @State private var scrollToBottom = true // Track whether to scroll to the bottom
     
-    // TO DO: variable to determine whether CameraView is active:
     @State private var isCameraViewActive = false
     
     @State private var llm = OpenAI()
@@ -333,12 +299,37 @@ struct ChatView: View {
         let userMessage = userInput
         conversation.append("You: \(userMessage)")
         
-        // ACTIVATES CAMERA BOX TOOL: - issue: activates it regardless of the question asked
-        agent = initialize_agent(llm: llm, tools: [CameraBoxTool(isCameraViewActive: $isCameraViewActive)])
+        // ACTIVATES CAMERA BOX TOOL: (put WeatherTool() in here too for now in order to determine whether the agent chooses the correct tool)
+        agent = initialize_agent(llm: llm, tools: [WeatherTool(), CameraBoxTool(isCameraViewActive: $isCameraViewActive)])
         Task {
             if let agent = agent {
                 let answer = await agent.run(args: userMessage)
                 print("ANSWER IS HEREEEE", answer)
+                
+                let entities = agent.agent.getInputs()
+                
+                let fieldKeyword = "Action Input:"
+                var extractedInputs: [String] = []
+
+                for entity in entities {
+                    let actionLog = entity.0.log
+                    if let range = actionLog.range(of: fieldKeyword) {
+                        let inputStartIndex = range.upperBound
+                        let inputSubstring = actionLog[inputStartIndex...]
+                        let input = String(inputSubstring.trimmingCharacters(in: .whitespacesAndNewlines))
+                        
+                        // Remove slashes and quotes from the input
+                        let cleanedInput = input.replacingOccurrences(of: #"[\\"]"#, with: "", options: .regularExpression)
+                        
+                        extractedInputs.append(cleanedInput)
+                    }
+                }
+
+                print("FINAL EXTRACTED INPUTS", extractedInputs)
+
+                highlightedObjects = extractedInputs
+
+                
             } else {
                 print("Agent not initialized")
             }
@@ -418,7 +409,6 @@ struct ChatView_Previews: PreviewProvider {
 struct CameraView: View {
 //    @State private var isCameraActive = false
     @State private var detectedObjects: [String] = []
-    @State private var highlightedObjectsScope: [String] = []
     
     private let session = AVCaptureSession()
     private let previewLayer = AVCaptureVideoPreviewLayer()
@@ -517,9 +507,7 @@ struct CameraView: View {
         }
         
         session.commitConfiguration()
-        
-        print("WHAT ARE THE OBJECTS OF INTEREST", highlightedObjectsScope)
-        
+                
         // Set the sample buffer delegate
         let delegate = SampleBufferDelegate(detectedObjects: $detectedObjects)
         videoOutput.setSampleBufferDelegate(delegate, queue: DispatchQueue.global(qos: .default))

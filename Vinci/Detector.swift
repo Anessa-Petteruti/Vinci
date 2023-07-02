@@ -45,9 +45,7 @@ extension ViewController {
             // Get the recognized object label and confidence
             let recognizedObject = objectObservation.labels[0].identifier
             let confidence = objectObservation.labels[0].confidence
-            
-            //            print(recognizedObject)
-            
+                        
             
             // If the user did not ask about a specific object, put bounding boxes around all objects in frame:
             if (highlightedObjects.count == 0) {
@@ -64,6 +62,7 @@ extension ViewController {
             }
             else {
                 // Check if recognizedObject is object of interest
+                // TO DO: check if recognizedObject = entities[0] from CameraBoxTool, also figure out how to account for multiple entities and not just the first one
                 if (recognizedObject == highlightedObjects[0]) {
                     print(highlightedObjects)
                     // Transformations

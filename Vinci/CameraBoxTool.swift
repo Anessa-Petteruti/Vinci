@@ -11,7 +11,7 @@ public struct CameraBoxTool: BaseTool {
     }
     
     public func name() -> String {
-        "Bounding box"
+        "camera view and bounding box"
     }
     
     public func description() -> String {
@@ -21,10 +21,9 @@ public struct CameraBoxTool: BaseTool {
     public func _run(args: String) throws -> String {
         DispatchQueue.main.async {
             isCameraViewActive = true
-            print("CAMERA ACTIVE", isCameraViewActive)
         }
         
         // Return a success message or any relevant result
-        return "Bounding box detection started."
+        return "Navigated to Camera View and finding object"
     }
 }
