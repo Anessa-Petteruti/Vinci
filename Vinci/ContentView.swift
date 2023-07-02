@@ -322,9 +322,17 @@ struct ChatView: View {
                         // Remove slashes and quotes from the input
                         let cleanedInput = input.replacingOccurrences(of: #"[\\"]"#, with: "", options: .regularExpression)
                         
-                        extractedInputs.append(cleanedInput)
+                        // Split the cleaned input into individual words
+                        let words = cleanedInput.components(separatedBy: .whitespaces)
+                        
+                        // Filter out the word "and" from the words array
+                        let filteredWords = words.filter { $0.lowercased() != "and" }
+                        
+                        // Append individual words to the extractedInputs array
+                        extractedInputs.append(contentsOf: filteredWords)
                     }
                 }
+
 
                 print("FINAL EXTRACTED INPUTS", extractedInputs)
 
