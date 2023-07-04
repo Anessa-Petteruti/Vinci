@@ -215,7 +215,7 @@ struct ChatView: View {
     @State private var agent: AgentExecutor?
     
     @State private var isLoading = false
-
+    
     
     
     var body: some View {
@@ -297,11 +297,11 @@ struct ChatView: View {
                 .padding()
                 .disabled(userInput.isEmpty)
             }
-
+            
             if isLoading {
                 LoadingIndicator()
-                                .padding()
-                        }
+                    .padding()
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
             clearTextField()
@@ -328,86 +328,89 @@ struct ChatView: View {
     func sendMessage() {
         let userMessage = userInput
         conversation.append("You: \(userMessage)")
-
+        
         DispatchQueue.main.async {
             userInput = ""
         }
-
+        
         isLoading = true
-
+        
         // Reset highlightedObjects so it doesn't display bounding boxes of previous run
         highlightedObjects = []
-
+        
         // Collapse the keyboard
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-
+        
         // ACTIVATES CAMERA BOX TOOL: (put WeatherTool() in here too for now to determine whether the agent chooses the correct tool)
         agent = initialize_agent(llm: llm, tools: [WeatherTool(), CameraBoxTool(isCameraViewActive: $isCameraViewActive)])
-
+        
         Task {
             if let agent = agent {
                 let answer = await agent.run(args: userMessage)
-
+                
                 let entities = agent.agent.getInputs()
-
+                
                 let fieldKeyword = "Action Input:"
                 var extractedInputs: [String] = []
-
+                
                 for entity in entities {
                     let actionLog = entity.0.log
                     if let range = actionLog.range(of: fieldKeyword) {
                         let inputStartIndex = range.upperBound
                         let inputSubstring = actionLog[inputStartIndex...]
                         let input = String(inputSubstring.trimmingCharacters(in: .whitespacesAndNewlines))
-
+                        
                         // Remove slashes and quotes from the input
                         let cleanedInput = input.replacingOccurrences(of: #"[\\"]"#, with: "", options: .regularExpression)
-
+                        
                         // Split the cleaned input into individual words
                         let words = cleanedInput.components(separatedBy: .whitespaces)
-
+                        
                         // Filter out the word "and" from the words array
                         let filteredWords = words.filter { $0.lowercased() != "and" }
-
+                        
                         // Append individual words to the extractedInputs array
                         extractedInputs.append(contentsOf: filteredWords)
                     }
                 }
-
+                
                 print("FINAL EXTRACTED ENTITIES", extractedInputs)
                 
                 
-
+                
                 // Perform word similarity using NLEmbedding
                 var similarWords: [String] = []
-
+                
                 if let embedding = NLEmbedding.wordEmbedding(for: .english) {
                     
                     for entity in extractedInputs {
-                        var maxSimilarity: Float = 1.0
+                        var maxSimilarity: Float = 0.8
                         var similarWord: String = ""
                         var foundExactMatch = false
-
+                        
                         for observation in allObservations {
                             let similarity = Float(embedding.distance(between: entity, and: observation))
                             print("SIMILARITY", observation, similarity)
-
+                            
                             // Stop if you have found exact match:
                             if similarity == 0.0 {
                                 similarWords.append(entity)
                                 foundExactMatch = true
                                 break
                             } else if similarity < maxSimilarity {
+                                print("LESS THAN")
                                 maxSimilarity = similarity
                                 similarWord = observation
                             }
                         }
-
+                        
                         if !foundExactMatch {
+                            print(similarWord)
                             similarWords.append(similarWord)
                         }
                     }
                 }
+                // TO DO: if similarWords.count == 0, then display message that says "could not find object"
                 print("SIMILAR", similarWords)
                 highlightedObjects = similarWords
                 isLoading = false
