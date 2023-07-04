@@ -1,7 +1,27 @@
 // PSEUDOCODE
 
+
 // // Initialize empty map
 // map = empty_map()
+struct MapFeature {
+    var position: Vector3  // 3D position of the feature
+    // Add additional attributes as needed
+}
+
+struct SLAMMap {
+    var features: [MapFeature]  // List of features in the map
+
+    init() {
+        features = []
+    }
+
+    mutating func addFeature(_ feature: MapFeature) {
+        features.append(feature)
+    }
+}
+
+var map = SLAMMap()
+
 
 // // Initialize empty trajectory
 // trajectory = empty_trajectory()
