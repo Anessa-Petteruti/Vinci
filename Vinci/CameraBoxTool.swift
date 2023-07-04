@@ -26,9 +26,6 @@ public struct CameraBoxTool: BaseTool {
         
         //        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
         DispatchQueue.main.async {
-            // Collapse the keyboard
-//            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-            
             isCameraViewActive = true
         }
         //        }

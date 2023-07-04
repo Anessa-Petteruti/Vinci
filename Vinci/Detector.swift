@@ -10,6 +10,8 @@ import Vision
 import AVFoundation
 import UIKit
 
+var allObservations: [String] = []
+
 extension ViewController {
     
     func setupDetector() {
@@ -44,6 +46,8 @@ extension ViewController {
             
             // Get the recognized object label and confidence
             let recognizedObject = objectObservation.labels[0].identifier
+            allObservations.append(recognizedObject)
+//            print("OBSERVATION", allObservations)
             let confidence = objectObservation.labels[0].confidence
                         
             
