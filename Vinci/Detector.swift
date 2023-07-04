@@ -10,6 +10,8 @@ import Vision
 import AVFoundation
 import UIKit
 
+var allObservations: [String] = []
+
 extension ViewController {
     
     func setupDetector() {
@@ -44,27 +46,17 @@ extension ViewController {
             
             // Get the recognized object label and confidence
             let recognizedObject = objectObservation.labels[0].identifier
+            allObservations.append(recognizedObject)
+//            print("OBSERVATION", allObservations)
             let confidence = objectObservation.labels[0].confidence
                         
             
-            // If the user did not ask about a specific object, put bounding boxes around all objects in frame:
             if (highlightedObjects.count == 0) {
-                let objectBounds = VNImageRectForNormalizedRect(objectObservation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
-                let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
-                
-                let boxLayer = self.drawBoundingBox(transformedBounds)
-                
-                // Add label and confidence text to the box layer
-                let labelLayer = self.createLabelLayer(recognizedObject, confidence)
-                boxLayer.addSublayer(labelLayer)
-                
-                detectionLayer.addSublayer(boxLayer)
+                print("NO HIGHLIGHTED OBJECTS YET")
             }
             else {
-                // Check if recognizedObject is object of interest
-                // TO DO: check if recognizedObject = entities[0] from CameraBoxTool, also figure out how to account for multiple entities and not just the first one
-                if (recognizedObject == highlightedObjects[0]) {
-                    print(highlightedObjects)
+                // Check if any recognized object is in highlightedObjects
+                if highlightedObjects.contains(recognizedObject) {
                     // Transformations
                     let objectBounds = VNImageRectForNormalizedRect(objectObservation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
                     let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)

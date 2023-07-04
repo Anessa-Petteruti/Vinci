@@ -14,10 +14,13 @@ import Vision
 import os.log
 import LangChain
 import Foundation
+import NaturalLanguage
+
 
 var highlightedObjects: [String] = []
 var isCameraActive = false
 var isCameraViewActive = false
+var conversation: [String] = []
 
 struct ContentView: View {
     @State private var isSecondScreenActive = false
@@ -180,10 +183,29 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
+struct LoadingIndicator: View {
+    @State private var isAnimating = false
+    
+    var body: some View {
+        Circle()
+            .trim(from: 0, to: 0.8)
+            .stroke(Color.black, lineWidth: 5)
+            .rotationEffect(.degrees(isAnimating ? 360 : 0))
+            .animation(Animation.linear(duration: 1).repeatForever(autoreverses: false))
+            .onAppear {
+                isAnimating = true
+            }
+            .onDisappear {
+                isAnimating = false
+            }
+            .zIndex(1) // Set a higher zIndex to bring the loading indicator to the front
+    }
+}
+
 
 
 struct ChatView: View {
-    @State private var conversation: [String] = []
+    //    @State private var conversation: [String] = []
     @State private var userInput = ""
     @State private var scrollToBottom = true // Track whether to scroll to the bottom
     
@@ -191,6 +213,9 @@ struct ChatView: View {
     
     @State private var llm = OpenAI()
     @State private var agent: AgentExecutor?
+    
+    @State private var isLoading = false
+    
     
     
     var body: some View {
@@ -272,6 +297,11 @@ struct ChatView: View {
                 .padding()
                 .disabled(userInput.isEmpty)
             }
+            
+            if isLoading {
+                LoadingIndicator()
+                    .padding()
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
             clearTextField()
@@ -299,18 +329,30 @@ struct ChatView: View {
         let userMessage = userInput
         conversation.append("You: \(userMessage)")
         
-        // ACTIVATES CAMERA BOX TOOL: (put WeatherTool() in here too for now in order to determine whether the agent chooses the correct tool)
+        DispatchQueue.main.async {
+            userInput = ""
+        }
+        
+        isLoading = true
+        
+        // Reset highlightedObjects so it doesn't display bounding boxes of previous run
+        highlightedObjects = []
+        
+        // Collapse the keyboard
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        
+        // ACTIVATES CAMERA BOX TOOL: (put WeatherTool() in here too for now to determine whether the agent chooses the correct tool)
         agent = initialize_agent(llm: llm, tools: [WeatherTool(), CameraBoxTool(isCameraViewActive: $isCameraViewActive)])
+        
         Task {
             if let agent = agent {
                 let answer = await agent.run(args: userMessage)
-                print("ANSWER IS HEREEEE", answer)
                 
                 let entities = agent.agent.getInputs()
                 
                 let fieldKeyword = "Action Input:"
                 var extractedInputs: [String] = []
-
+                
                 for entity in entities {
                     let actionLog = entity.0.log
                     if let range = actionLog.range(of: fieldKeyword) {
@@ -321,25 +363,65 @@ struct ChatView: View {
                         // Remove slashes and quotes from the input
                         let cleanedInput = input.replacingOccurrences(of: #"[\\"]"#, with: "", options: .regularExpression)
                         
-                        extractedInputs.append(cleanedInput)
+                        // Split the cleaned input into individual words
+                        let words = cleanedInput.components(separatedBy: .whitespaces)
+                        
+                        // Filter out the word "and" from the words array
+                        let filteredWords = words.filter { $0.lowercased() != "and" }
+                        
+                        // Append individual words to the extractedInputs array
+                        extractedInputs.append(contentsOf: filteredWords)
                     }
                 }
-
-                print("FINAL EXTRACTED INPUTS", extractedInputs)
-
-                highlightedObjects = extractedInputs
-
                 
+                print("FINAL EXTRACTED ENTITIES", extractedInputs)
+                
+                
+                
+                // Perform word similarity using NLEmbedding
+                var similarWords: [String] = []
+                
+                if let embedding = NLEmbedding.wordEmbedding(for: .english) {
+                    
+                    for entity in extractedInputs {
+                        var maxSimilarity: Float = 0.8
+                        var similarWord: String = ""
+                        var foundExactMatch = false
+                        
+                        for observation in allObservations {
+                            let similarity = Float(embedding.distance(between: entity, and: observation))
+                            print("SIMILARITY", observation, similarity)
+                            
+                            // Stop if you have found exact match:
+                            if similarity == 0.0 {
+                                similarWords.append(entity)
+                                foundExactMatch = true
+                                break
+                            } else if similarity < maxSimilarity {
+                                print("LESS THAN")
+                                maxSimilarity = similarity
+                                similarWord = observation
+                            }
+                        }
+                        
+                        if !foundExactMatch {
+                            print(similarWord)
+                            similarWords.append(similarWord)
+                        }
+                    }
+                }
+                // TO DO: if similarWords.count == 0, then display message that says "could not find object"
+                print("SIMILAR", similarWords)
+                highlightedObjects = similarWords
+                isLoading = false
             } else {
                 print("Agent not initialized")
             }
         }
-        ///
         
         // Make a request to ChatGPT
         let chatGPTResponse = getChatGPTResponse(userMessage: userMessage)
-        
-        clearTextField()
+        isLoading = false
     }
     
     func clearTextField() {
@@ -360,12 +442,6 @@ struct ChatView: View {
                 ["role": "user", "content": userMessage]
             ]
         ]
-                
-//        if (userMessage == "Can you find my bottle") {
-//            print(userMessage)
-//            isCameraViewActive = true
-//            highlightedObjects = ["bottle"]
-//        }
         
         AF.request(endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             .validate()
@@ -379,7 +455,7 @@ struct ChatView: View {
                         scrollToBottom = false // Disable automatic scrolling while appending AI reply
                         // Update the UI with the response from ChatGPT
                         DispatchQueue.main.async {
-                            self.conversation.append("Vinci: \(content)")
+                            conversation.append("Vinci: \(content)")
                             scrollToBottom = true // Re-enable automatic scrolling after appending AI reply
                         }
                     }
@@ -407,7 +483,7 @@ struct ChatView_Previews: PreviewProvider {
 }
 
 struct CameraView: View {
-//    @State private var isCameraActive = false
+    //    @State private var isCameraActive = false
     @State private var detectedObjects: [String] = []
     
     private let session = AVCaptureSession()
@@ -507,7 +583,7 @@ struct CameraView: View {
         }
         
         session.commitConfiguration()
-                
+        
         // Set the sample buffer delegate
         let delegate = SampleBufferDelegate(detectedObjects: $detectedObjects)
         videoOutput.setSampleBufferDelegate(delegate, queue: DispatchQueue.global(qos: .default))
