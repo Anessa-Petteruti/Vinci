@@ -2,7 +2,6 @@ import Foundation
 import LangChain
 import SwiftUI
 
-// need to define TextResponseTool() and BoundingBoxTool()
 public struct CameraBoxTool: BaseTool {
     @Binding var isCameraViewActive: Bool
     

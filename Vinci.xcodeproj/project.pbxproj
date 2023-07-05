@@ -21,6 +21,7 @@
 		F6A7DBDB2A4CD9180094EC55 /* LangChain in Frameworks */ = {isa = PBXBuildFile; productRef = F6A7DBDA2A4CD9180094EC55 /* LangChain */; };
 		F6A7DBDD2A4DCF0C0094EC55 /* env.txt in Resources */ = {isa = PBXBuildFile; fileRef = F6A7DBDC2A4DCF0C0094EC55 /* env.txt */; };
 		F6FDA6252A50BA5A00891CB1 /* CameraBoxTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FDA6242A50BA5A00891CB1 /* CameraBoxTool.swift */; };
+		F6FFE4E62A550E8E00239EAF /* FindEntityTextResponseTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE4E52A550E8E00239EAF /* FindEntityTextResponseTool.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +59,7 @@
 		F6A7DBD72A4C960E0094EC55 /* YOLOv3.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = YOLOv3.mlmodel; path = ../../../Downloads/YOLOv3.mlmodel; sourceTree = "<group>"; };
 		F6A7DBDC2A4DCF0C0094EC55 /* env.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = env.txt; path = Vinci/env.txt; sourceTree = "<group>"; };
 		F6FDA6242A50BA5A00891CB1 /* CameraBoxTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraBoxTool.swift; sourceTree = "<group>"; };
+		F6FFE4E52A550E8E00239EAF /* FindEntityTextResponseTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindEntityTextResponseTool.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +124,7 @@
 				F6A7DBCF2A4C8E990094EC55 /* ViewController.swift */,
 				F6A7DBD72A4C960E0094EC55 /* YOLOv3.mlmodel */,
 				F6FDA6242A50BA5A00891CB1 /* CameraBoxTool.swift */,
+				F6FFE4E52A550E8E00239EAF /* FindEntityTextResponseTool.swift */,
 			);
 			path = Vinci;
 			sourceTree = "<group>";
@@ -301,6 +304,7 @@
 				F6A7DBD82A4C960E0094EC55 /* YOLOv3.mlmodel in Sources */,
 				F692CBFB2A48C8E200661CE0 /* ContentView.swift in Sources */,
 				F692CBF92A48C8E200661CE0 /* VinciApp.swift in Sources */,
+				F6FFE4E62A550E8E00239EAF /* FindEntityTextResponseTool.swift in Sources */,
 				F6A7DBD02A4C8E990094EC55 /* ViewController.swift in Sources */,
 				F6A7DBCE2A4C8E7A0094EC55 /* Detector.swift in Sources */,
 			);
