@@ -15,6 +15,7 @@ import os.log
 import LangChain
 import Foundation
 import NaturalLanguage
+import ARKit
 
 
 var highlightedObjects: [String] = []
@@ -22,6 +23,7 @@ var isCameraActive = false
 var isCameraViewActive = false
 var userInputGlobal = ""
 var conversation: [String] = []
+var isARActive = false
 
 struct ContentView: View {
     @State private var isSecondScreenActive = false
@@ -133,8 +135,12 @@ struct Tab1View: View {
 struct Tab2View: View {
     var body: some View {
         VStack{
-            HostedViewController()
-                .ignoresSafeArea()
+            if isARActive {
+                ARHostedViewController().ignoresSafeArea()
+            } else {
+                HostedViewController().ignoresSafeArea()
+            }
+            
         }
     }
 }
@@ -209,16 +215,14 @@ struct ChatView: View {
     @State private var userInput = ""
     @State private var scrollToBottom = true // Track whether to scroll to the bottom
     
-    @State private var isCameraViewActive = false
+    @State private var isCameraViewActive = false // Passed into tool
+    @State private var isCameraClockViewActive = false // Passed into tool
     
     @State private var llm = OpenAI()
     @State private var agent: AgentExecutor?
     
     @State private var isLoading = false
     private let chatGPTTool = ChatGPTTool()
-    
-    //    @ObservedObject var conversationManager = ConversationManager()
-    
     
     
     var body: some View {
@@ -326,6 +330,16 @@ struct ChatView: View {
             )
             .hidden()
         )
+        .background(
+            NavigationLink(
+                destination: SecondView(selectedTab: 2),
+                isActive: $isCameraClockViewActive,
+                label: {
+                    EmptyView()
+                }
+            )
+            .hidden()
+        )
         
     }
     
@@ -348,7 +362,8 @@ struct ChatView: View {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         
         // ACTIVATES TOOL:
-        agent = initialize_agent(llm: llm, tools: [ChatGPTTool(), WeatherTool(), CameraBoxTool(isCameraViewActive: $isCameraViewActive)])
+        agent = initialize_agent(llm: llm, tools: [CameraClockTool(isCameraClockViewActive: $isCameraClockViewActive), ChatGPTTool(), WeatherTool(), CameraBoxTool(isCameraViewActive: $isCameraViewActive)])
+        
         
         Task {
             if let agent = agent {
@@ -383,7 +398,6 @@ struct ChatView: View {
                 print("FINAL EXTRACTED ENTITIES", extractedInputs)
                 
                 
-                
                 // Perform word similarity using NLEmbedding
                 var similarWords: [String] = []
                 
@@ -416,10 +430,12 @@ struct ChatView: View {
                         }
                     }
                 }
-                // TO DO: if similarWords.count == 0, then display message that says "could not find object"
+       
                 print("SIMILAR", similarWords)
                 highlightedObjects = similarWords
+
                 isLoading = false
+                
             } else {
                 print("Agent not initialized")
             }
@@ -602,8 +618,6 @@ struct CameraView: View {
         
     }
     
-    
-    
 }
 
 class SampleBufferDelegate: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
@@ -713,6 +727,120 @@ struct CameraPreview: UIViewRepresentable {
         previewLayer.frame = uiView.bounds
     }
 }
+
+
+// AR VIEW STARTS HERE
+//struct ARClockView: View {
+//    @State private var currentTime = Date()
+//
+//    var body: some View {
+//        VStack {
+//            ARSceneView(currentTime: $currentTime)
+//                .frame(width: 300, height: 300)
+//
+//            Text(currentTimeAsString)
+//                .font(.title)
+//        }
+//        .onAppear {
+//            updateCurrentTime()
+//        }
+//    }
+//
+//    private func updateCurrentTime() {
+//        let timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+//            currentTime = Date()
+//        }
+//        timer.fire()
+//    }
+//
+//    private var currentTimeAsString: String {
+//        let formatter = DateFormatter()
+//        formatter.dateFormat = "HH:mm:ss"
+//        return formatter.string(from: currentTime)
+//    }
+//}
+//
+//struct ARSceneView: UIViewRepresentable {
+//    @Binding var currentTime: Date
+//
+//    func makeUIView(context: Context) -> ARSCNView {
+//        let arView = ARSCNView()
+//
+//        // Set up the AR scene and add the AR artifacts
+//        // Use ARKit APIs to configure the AR scene and add 3D objects
+//        // ...
+//
+//        // Update the clock artifact in the AR scene based on the current time
+//        let clockNode = SCNNode()
+//        arView.scene.rootNode.addChildNode(clockNode)
+//
+//        let clockGeometry = SCNText(string: getCurrentTimeAsString(), extrusionDepth: 0.1)
+//        // Configure the clock geometry and appearance
+//        // ...
+//        clockNode.geometry = clockGeometry
+//
+//        return arView
+//    }
+//
+//    func updateUIView(_ uiView: ARSCNView, context: Context) {
+//        // Update the AR scene if needed
+//        // Use ARKit APIs to update the AR scene or adjust the clock artifact
+//        // ...
+//
+//        // Update the clock geometry based on the current time
+//        if let clockNode = uiView.scene.rootNode.childNode(withName: "clock", recursively: true) {
+//            clockNode.geometry = SCNText(string: getCurrentTimeAsString(), extrusionDepth: 0.1)
+//            // Configure the updated clock geometry and appearance
+//            // ...
+//        }
+//    }
+//
+//    private func getCurrentTimeAsString() -> String {
+//        let formatter = DateFormatter()
+//        formatter.dateFormat = "HH:mm:ss"
+//        return formatter.string(from: currentTime)
+//    }
+//}
+//
+//class ARSceneViewCoordinator: NSObject, ARSessionDelegate {
+//    static let shared = ARSceneViewCoordinator()
+//    private var session: ARSession?
+//
+//    private override init() {
+//        super.init()
+//    }
+//
+//    func startARSession(_ configuration: ARConfiguration) {
+//        session = ARSession()
+//        session?.delegate = self
+//        session?.run(configuration)
+//        print("AR STARTED")
+//    }
+//
+//    func stopARSession() {
+//        session?.pause()
+//        session = nil
+//    }
+//
+//    func session(_ session: ARSession, didUpdate frame: ARFrame) {
+//        // Handle AR session updates if needed
+//    }
+//
+//    func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
+//        // Handle new AR anchors if needed
+//    }
+//
+//    func session(_ session: ARSession, didRemove anchors: [ARAnchor]) {
+//        // Handle removed AR anchors if needed
+//    }
+//
+//    func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {
+//        // Handle updated AR anchors if needed
+//    }
+//
+//    // Implement other ARSessionDelegate methods as required
+//}
+
 
 
 extension Font {

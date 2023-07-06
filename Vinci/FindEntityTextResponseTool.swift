@@ -3,11 +3,6 @@ import LangChain
 import SwiftUI
 
 public struct FindEntityTextResponseTool: BaseTool {
-//    @Binding var isCameraViewActive: Bool
-//
-//    public init(isCameraViewActive: Binding<Bool>) {
-//        _isCameraViewActive = isCameraViewActive
-//    }
     
     public func name() -> String {
         "text response to user asking to find an object"
