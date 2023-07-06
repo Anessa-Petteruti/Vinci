@@ -10,16 +10,14 @@ public struct CameraBoxTool: BaseTool {
     }
     
     public func name() -> String {
-        "camera view and bounding box"
+        "camera to find an object and put a bounding box around the object of interest"
     }
     
     public func description() -> String {
         "use when you want to find an object"
     }
     
-    public func _run(args: String) throws -> String {
-        conversation.append("Vinci: Let me see if I can find it!")
-        
+    public func _run(args: String) throws -> String {        
         
 //        Thread.sleep(forTimeInterval: 1)
         

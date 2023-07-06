@@ -21,6 +21,7 @@ var highlightedObjects: [String] = []
 var isCameraActive = false
 var isCameraViewActive = false
 var conversation: [String] = []
+var userInputGlobal = ""
 
 struct ContentView: View {
     @State private var isSecondScreenActive = false
@@ -202,7 +203,15 @@ struct LoadingIndicator: View {
     }
 }
 
-
+class ConversationManager: ObservableObject {
+    @Published var conversation: [String] = []
+    
+    func addMessage(_ message: String) {
+        DispatchQueue.main.async {
+            self.conversation.append(message)
+        }
+    }
+}
 
 struct ChatView: View {
     //    @State private var conversation: [String] = []
@@ -215,7 +224,8 @@ struct ChatView: View {
     @State private var agent: AgentExecutor?
     
     @State private var isLoading = false
-    
+    @StateObject private var conversationManager = ConversationManager()
+
     
     
     var body: some View {
@@ -223,7 +233,7 @@ struct ChatView: View {
             ScrollViewReader { scrollView in
                 ScrollView {
                     VStack(alignment: .leading, spacing: 10) {
-                        ForEach(conversation, id: \.self) { message in
+                        ForEach(conversationManager.conversation, id: \.self) { message in
                             if message.starts(with: "Vinci:") {
                                 let parts = message.split(separator: ":", maxSplits: 1)
                                 if let name = parts.first, let content = parts.last {
@@ -264,11 +274,11 @@ struct ChatView: View {
                         }
                     }
                     .padding()
-                    .onChange(of: conversation, perform: { _ in
+                    .onChange(of: conversationManager.conversation, perform: { _ in
                         // Scroll to the bottom when the conversation updates
                         if scrollToBottom {
                             withAnimation {
-                                scrollView.scrollTo(conversation.count - 1, anchor: .bottom)
+                                scrollView.scrollTo(conversationManager.conversation.count - 1, anchor: .bottom)
                             }
                         }
                     })
@@ -278,7 +288,9 @@ struct ChatView: View {
             .onAppear {
                 scrollToBottom = true // Scroll to the bottom on initial appearance
             }
-            
+            .onChange(of: conversationManager.conversation) { _ in
+                        scrollToBottom = true
+                    }
             HStack {
                 TextField("Enter your message", text: $userInput, onCommit: sendMessage)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -315,11 +327,6 @@ struct ChatView: View {
                 }
             )
             .hidden()
-            //            .onChange(of: 2) { _ in
-            //                    DispatchQueue.main.async {
-            //                        self.view.layer.bringSubviewToFront(detectionLayer)
-            //                    }
-            //                }
         )
         
     }
@@ -327,7 +334,8 @@ struct ChatView: View {
     
     func sendMessage() {
         let userMessage = userInput
-        conversation.append("You: \(userMessage)")
+        userInputGlobal = userInput
+        conversationManager.conversation.append("You: \(userMessage)")
         
         DispatchQueue.main.async {
             userInput = ""
@@ -341,8 +349,8 @@ struct ChatView: View {
         // Collapse the keyboard
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         
-        // ACTIVATES CAMERA BOX TOOL: (put WeatherTool() in here too for now to determine whether the agent chooses the correct tool)
-        agent = initialize_agent(llm: llm, tools: [WeatherTool(), CameraBoxTool(isCameraViewActive: $isCameraViewActive)])
+        // ACTIVATES TOOL:
+        agent = initialize_agent(llm: llm, tools: [ChatGPTTool(), WeatherTool(), CameraBoxTool(isCameraViewActive: $isCameraViewActive)])
         
         Task {
             if let agent = agent {
@@ -419,8 +427,8 @@ struct ChatView: View {
             }
         }
         
-        // Make a request to ChatGPT
-        let chatGPTResponse = getChatGPTResponse(userMessage: userMessage)
+//        // Make a request to ChatGPT
+//        let chatGPTResponse = getChatGPTResponse(userMessage: userMessage)
         isLoading = false
     }
     
@@ -428,44 +436,45 @@ struct ChatView: View {
         userInput = ""
     }
     
-    func getChatGPTResponse(userMessage: String) -> String {
-        let apiKey = "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"
-        let endpoint = "https://api.openai.com/v1/chat/completions"
-        let headers: HTTPHeaders = [
-            "Authorization": "Bearer \(apiKey)",
-            "Content-Type": "application/json"
-        ]
-        let parameters: Parameters = [
-            "model": "gpt-3.5-turbo",
-            "messages": [
-                ["role": "system", "content": "You are a helpful assistant."],
-                ["role": "user", "content": userMessage]
-            ]
-        ]
-        
-        AF.request(endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            .validate()
-            .responseJSON { response in
-                switch response.result {
-                case .success(let value):
-                    if let json = value as? [String: Any],
-                       let choices = json["choices"] as? [[String: Any]],
-                       let chatGPTResponse = choices.first?["message"] as? [String: String],
-                       let content = chatGPTResponse["content"] {
-                        scrollToBottom = false // Disable automatic scrolling while appending AI reply
-                        // Update the UI with the response from ChatGPT
-                        DispatchQueue.main.async {
-                            conversation.append("Vinci: \(content)")
-                            scrollToBottom = true // Re-enable automatic scrolling after appending AI reply
-                        }
-                    }
-                case .failure(let error):
-                    print("Error making ChatGPT request: \(error.localizedDescription)")
-                }
-            }
-        
-        return ""  // Return an empty string for now, as the actual response will be updated asynchronously
-    }
+//    static func getChatGPTResponse(userMessage: String) -> String {
+//        @State var scrollToBottom = true
+//        let apiKey = "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"
+//        let endpoint = "https://api.openai.com/v1/chat/completions"
+//        let headers: HTTPHeaders = [
+//            "Authorization": "Bearer \(apiKey)",
+//            "Content-Type": "application/json"
+//        ]
+//        let parameters: Parameters = [
+//            "model": "gpt-3.5-turbo",
+//            "messages": [
+//                ["role": "system", "content": "You are a helpful assistant."],
+//                ["role": "user", "content": userMessage]
+//            ]
+//        ]
+//
+//        AF.request(endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+//            .validate()
+//            .responseJSON { response in
+//                switch response.result {
+//                case .success(let value):
+//                    if let json = value as? [String: Any],
+//                       let choices = json["choices"] as? [[String: Any]],
+//                       let chatGPTResponse = choices.first?["message"] as? [String: String],
+//                       let content = chatGPTResponse["content"] {
+//                        scrollToBottom = false // Disable automatic scrolling while appending AI reply
+//                        // Update the UI with the response from ChatGPT
+//                        DispatchQueue.main.async {
+//                            conversation.append("Vinci: \(content)")
+//                            scrollToBottom = true // Re-enable automatic scrolling after appending AI reply
+//                        }
+//                    }
+//                case .failure(let error):
+//                    print("Error making ChatGPT request: \(error.localizedDescription)")
+//                }
+//            }
+//
+//        return ""  // Return an empty string for now, as the actual response will be updated asynchronously
+//    }
 }
 
 struct ChatGPTResponse: Decodable {
