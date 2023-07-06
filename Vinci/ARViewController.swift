@@ -39,8 +39,18 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         // Call addTimeNodeToScene()
         addTimeNodeToScene()
 
+        // Add lighting to the scene
+        addLighting()
+
         // Start the AR session
         startARSession()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        // Pause the AR session when the view is about to disappear
+        arView.session.pause()
     }
 
     func startARSession() {
@@ -59,8 +69,8 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
 
         timeNode = SCNNode(geometry: textGeometry)
         timeNode.position = SCNVector3(0, 0, -1) // Adjust the position here
-        timeNode.scale = SCNVector3(0.1, 0.1, 0.1) // Adjust the scale here
-        
+        timeNode.scale = SCNVector3(0.2, 0.2, 0.2) // Adjust the scale here
+
         arView.scene.rootNode.addChildNode(timeNode)
     }
 
@@ -68,6 +78,19 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm:ss"
         return formatter.string(from: Date())
+    }
+
+    func addLighting() {
+        let directionalLight = SCNLight()
+        directionalLight.type = .directional
+        directionalLight.intensity = 1000
+        directionalLight.castsShadow = true
+
+        let directionalNode = SCNNode()
+        directionalNode.light = directionalLight
+        directionalNode.eulerAngles = SCNVector3(-Float.pi / 4, 0, 0) // Adjust the direction of the light
+
+        arView.scene.rootNode.addChildNode(directionalNode)
     }
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
