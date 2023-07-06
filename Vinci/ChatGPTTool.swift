@@ -11,7 +11,7 @@ public struct ChatGPTTool: BaseTool {
         "use when you want to respond to the user when they are not asking you to find an object"
     }
     
-    public func _run(args: String) async throws -> String {
-        return try await ChatAPI.getChatGPTResponse(userMessage: args)
+    public func _run(args: String) throws -> String {
+        return try ChatAPI().getChatGPTResponse(userMessage: args)
     }
 }
