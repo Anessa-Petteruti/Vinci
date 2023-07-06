@@ -205,6 +205,7 @@ struct LoadingIndicator: View {
 
 class ConversationManager: ObservableObject {
     @Published var conversation: [String] = []
+//    @Published var currentTool: BaseTool? = nil
     
     func addMessage(_ message: String) {
         DispatchQueue.main.async {
@@ -225,6 +226,7 @@ struct ChatView: View {
     
     @State private var isLoading = false
     @StateObject private var conversationManager = ConversationManager()
+    private let chatGPTTool = ChatGPTTool()
 
     
     
@@ -233,7 +235,7 @@ struct ChatView: View {
             ScrollViewReader { scrollView in
                 ScrollView {
                     VStack(alignment: .leading, spacing: 10) {
-                        ForEach(conversationManager.conversation, id: \.self) { message in
+                        ForEach(conversation, id: \.self) { message in
                             if message.starts(with: "Vinci:") {
                                 let parts = message.split(separator: ":", maxSplits: 1)
                                 if let name = parts.first, let content = parts.last {
@@ -252,6 +254,9 @@ struct ChatView: View {
                                     .background(Color(UIColor.systemGray6))
                                     .cornerRadius(16)
                                     .frame(maxWidth: .infinity, alignment: .leading)
+                                    .onAppear {
+                                                print("CONVOOO", conversation)
+                                            }
                                 }
                             } else {
                                 let parts = message.split(separator: ":", maxSplits: 1)
@@ -274,11 +279,11 @@ struct ChatView: View {
                         }
                     }
                     .padding()
-                    .onChange(of: conversationManager.conversation, perform: { _ in
+                    .onChange(of: conversation, perform: { _ in
                         // Scroll to the bottom when the conversation updates
                         if scrollToBottom {
                             withAnimation {
-                                scrollView.scrollTo(conversationManager.conversation.count - 1, anchor: .bottom)
+                                scrollView.scrollTo(conversation.count - 1, anchor: .bottom)
                             }
                         }
                     })
@@ -288,7 +293,7 @@ struct ChatView: View {
             .onAppear {
                 scrollToBottom = true // Scroll to the bottom on initial appearance
             }
-            .onChange(of: conversationManager.conversation) { _ in
+            .onChange(of: conversation) { _ in
                         scrollToBottom = true
                     }
             HStack {
@@ -310,11 +315,13 @@ struct ChatView: View {
                 .disabled(userInput.isEmpty)
             }
             
+            
             if isLoading {
                 LoadingIndicator()
                     .padding()
             }
         }
+        
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
             clearTextField()
         }
@@ -335,7 +342,7 @@ struct ChatView: View {
     func sendMessage() {
         let userMessage = userInput
         userInputGlobal = userInput
-        conversationManager.conversation.append("You: \(userMessage)")
+        conversation.append("You: \(userMessage)")
         
         DispatchQueue.main.async {
             userInput = ""

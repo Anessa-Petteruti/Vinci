@@ -30,8 +30,6 @@ class ChatAPI {
                                let content = chatGPTResponse["content"] {
                                 continuation.resume(returning: content)
                                 conversation.append("Vinci: \(content)")
-//                                ConversationManager().conversation.append("Vinci: \(content)")
-                                ConversationManager().addMessage("Vinci: \(content)")
                                 print("THIS IS CONVERSATIONN", conversation)
                             } else {
                                 throw NSError(domain: "ChatGPT response error", code: 0, userInfo: nil)
