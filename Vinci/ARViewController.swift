@@ -13,6 +13,7 @@ import ARKit
 
 class ARViewController: UIViewController, ARSCNViewDelegate {
     private var arView: ARSCNView!
+    private var timeNode: SCNNode!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,8 +36,8 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
             arView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
 
-        // Call addCubeToScene()
-        addCubeToScene()
+        // Call addTimeNodeToScene()
+        addTimeNodeToScene()
 
         // Start the AR session
         startARSession()
@@ -51,24 +52,38 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         arView.session.run(configuration)
     }
 
-    func addCubeToScene() {
-        let cubeNode = SCNNode(geometry: SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0))
-        cubeNode.position = SCNVector3(0, 0, -1) // Adjust the position here
-        arView.scene.rootNode.addChildNode(cubeNode)
+    func addTimeNodeToScene() {
+        let textGeometry = SCNText(string: getCurrentTime(), extrusionDepth: 0.1)
+        textGeometry.font = UIFont.systemFont(ofSize: 0.2)
+        textGeometry.alignmentMode = CATextLayerAlignmentMode.center.rawValue
+
+        timeNode = SCNNode(geometry: textGeometry)
+        timeNode.position = SCNVector3(0, 0, -1) // Adjust the position here
+        timeNode.scale = SCNVector3(0.1, 0.1, 0.1) // Adjust the scale here
+        
+        arView.scene.rootNode.addChildNode(timeNode)
     }
 
-    // ARSCNViewDelegate methods for updating the AR scene
-    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        // Handle updates to AR anchors if needed
+    func getCurrentTime() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss"
+        return formatter.string(from: Date())
+    }
+
+    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        // Update the text geometry to display the current time
+        let currentTime = getCurrentTime()
+        if let textGeometry = timeNode.geometry as? SCNText {
+            textGeometry.string = currentTime
+        }
     }
 }
-
 
 struct ARHostedViewController: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         return ARViewController()
     }
-    
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
     }
 }
