@@ -22,6 +22,7 @@ public struct CameraClockTool: BaseTool {
         DispatchQueue.main.async {
             isCameraClockViewActive = true
             isARActive = true
+            isCameraViewActive = false
         }
         
         // Return a success message or any relevant result

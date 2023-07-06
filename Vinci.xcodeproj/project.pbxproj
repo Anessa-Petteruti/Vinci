@@ -26,6 +26,8 @@
 		F6FFE4EA2A56429300239EAF /* ChatAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE4E92A56429300239EAF /* ChatAPI.swift */; };
 		F6FFE4EC2A5710DA00239EAF /* CameraClockTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE4EB2A5710DA00239EAF /* CameraClockTool.swift */; };
 		F6FFE4EE2A571C7300239EAF /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE4ED2A571C7300239EAF /* ARViewController.swift */; };
+		F6FFE4F02A57283400239EAF /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE4EF2A57283400239EAF /* CameraView.swift */; };
+		F6FFE4F22A5728B900239EAF /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE4F12A5728B900239EAF /* ChatView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +70,8 @@
 		F6FFE4E92A56429300239EAF /* ChatAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAPI.swift; sourceTree = "<group>"; };
 		F6FFE4EB2A5710DA00239EAF /* CameraClockTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraClockTool.swift; sourceTree = "<group>"; };
 		F6FFE4ED2A571C7300239EAF /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
+		F6FFE4EF2A57283400239EAF /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
+		F6FFE4F12A5728B900239EAF /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,12 +135,11 @@
 				F6A7DBCD2A4C8E7A0094EC55 /* Detector.swift */,
 				F6A7DBCF2A4C8E990094EC55 /* ViewController.swift */,
 				F6A7DBD72A4C960E0094EC55 /* YOLOv3.mlmodel */,
-				F6FDA6242A50BA5A00891CB1 /* CameraBoxTool.swift */,
-				F6FFE4E52A550E8E00239EAF /* FindEntityTextResponseTool.swift */,
-				F6FFE4E72A563D7100239EAF /* ChatGPTTool.swift */,
+				F6FFE4F42A5729D600239EAF /* Tools */,
 				F6FFE4E92A56429300239EAF /* ChatAPI.swift */,
-				F6FFE4EB2A5710DA00239EAF /* CameraClockTool.swift */,
 				F6FFE4ED2A571C7300239EAF /* ARViewController.swift */,
+				F6FFE4EF2A57283400239EAF /* CameraView.swift */,
+				F6FFE4F12A5728B900239EAF /* ChatView.swift */,
 			);
 			path = Vinci;
 			sourceTree = "<group>";
@@ -171,6 +174,17 @@
 			children = (
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		F6FFE4F42A5729D600239EAF /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				F6FDA6242A50BA5A00891CB1 /* CameraBoxTool.swift */,
+				F6FFE4E52A550E8E00239EAF /* FindEntityTextResponseTool.swift */,
+				F6FFE4EB2A5710DA00239EAF /* CameraClockTool.swift */,
+				F6FFE4E72A563D7100239EAF /* ChatGPTTool.swift */,
+			);
+			path = Tools;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -315,8 +329,10 @@
 				F6FDA6252A50BA5A00891CB1 /* CameraBoxTool.swift in Sources */,
 				F6A7DBD82A4C960E0094EC55 /* YOLOv3.mlmodel in Sources */,
 				F692CBFB2A48C8E200661CE0 /* ContentView.swift in Sources */,
+				F6FFE4F02A57283400239EAF /* CameraView.swift in Sources */,
 				F692CBF92A48C8E200661CE0 /* VinciApp.swift in Sources */,
 				F6FFE4E62A550E8E00239EAF /* FindEntityTextResponseTool.swift in Sources */,
+				F6FFE4F22A5728B900239EAF /* ChatView.swift in Sources */,
 				F6FFE4EC2A5710DA00239EAF /* CameraClockTool.swift in Sources */,
 				F6FFE4E82A563D7100239EAF /* ChatGPTTool.swift in Sources */,
 				F6A7DBD02A4C8E990094EC55 /* ViewController.swift in Sources */,
