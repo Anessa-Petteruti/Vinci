@@ -110,6 +110,7 @@
 			children = (
 				F6A7DBDC2A4DCF0C0094EC55 /* env.txt */,
 				F692CBF72A48C8E200661CE0 /* Vinci */,
+				F692CBFF2A48C8E400661CE0 /* Preview Content */,
 				F692CC092A48C8E400661CE0 /* VinciTests */,
 				F692CC132A48C8E400661CE0 /* VinciUITests */,
 				F692CBF62A48C8E200661CE0 /* Products */,
@@ -132,19 +133,13 @@
 				F68DEF252A49CA7E00D0057F /* Info.plist */,
 				F692CC232A48CFE100661CE0 /* Fonts */,
 				F692CBF82A48C8E200661CE0 /* VinciApp.swift */,
-				F692CBFA2A48C8E200661CE0 /* ContentView.swift */,
 				F692CBFC2A48C8E400661CE0 /* Assets.xcassets */,
 				F692CBFE2A48C8E400661CE0 /* Vinci.entitlements */,
-				F692CBFF2A48C8E400661CE0 /* Preview Content */,
-				F6A7DBCD2A4C8E7A0094EC55 /* Detector.swift */,
-				F6A7DBCF2A4C8E990094EC55 /* ViewController.swift */,
-				F6A7DBD72A4C960E0094EC55 /* YOLOv3.mlmodel */,
 				F6FFE4F42A5729D600239EAF /* Tools */,
+				F6FFE4F92A57AF0800239EAF /* Controllers */,
+				F6FFE4FA2A57AF3900239EAF /* Views */,
 				F6FFE4E92A56429300239EAF /* ChatAPI.swift */,
-				F6FFE4ED2A571C7300239EAF /* ARViewController.swift */,
-				F6FFE4EF2A57283400239EAF /* CameraView.swift */,
-				F6FFE4F12A5728B900239EAF /* ChatView.swift */,
-				F6FFE4F52A579D4D00239EAF /* ARButtonViewController.swift */,
+				F6A7DBD72A4C960E0094EC55 /* YOLOv3.mlmodel */,
 			);
 			path = Vinci;
 			sourceTree = "<group>";
@@ -191,6 +186,27 @@
 				F6FFE4F72A579D8300239EAF /* ButtonTool.swift */,
 			);
 			path = Tools;
+			sourceTree = "<group>";
+		};
+		F6FFE4F92A57AF0800239EAF /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				F6FFE4F52A579D4D00239EAF /* ARButtonViewController.swift */,
+				F6FFE4ED2A571C7300239EAF /* ARViewController.swift */,
+				F6A7DBCF2A4C8E990094EC55 /* ViewController.swift */,
+				F6A7DBCD2A4C8E7A0094EC55 /* Detector.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		F6FFE4FA2A57AF3900239EAF /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F692CBFA2A48C8E200661CE0 /* ContentView.swift */,
+				F6FFE4F12A5728B900239EAF /* ChatView.swift */,
+				F6FFE4EF2A57283400239EAF /* CameraView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
