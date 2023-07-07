@@ -24,6 +24,7 @@ struct ChatView: View {
     
     @State private var isCameraViewActive = false // Passed into tool
     @State private var isCameraClockViewActive = false // Passed into tool
+    @State private var isARButtonViewActive = false // Passed into tool
     
     @State private var llm = OpenAI()
     @State private var agent: AgentExecutor?
@@ -147,6 +148,16 @@ struct ChatView: View {
             )
             .hidden()
         )
+        .background(
+            NavigationLink(
+                destination: SecondView(selectedTab: 2),
+                isActive: $isARButtonViewActive,
+                label: {
+                    EmptyView()
+                }
+            )
+            .hidden()
+        )
         
     }
     
@@ -169,7 +180,7 @@ struct ChatView: View {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         
         // ACTIVATES TOOL:
-        agent = initialize_agent(llm: llm, tools: [CameraClockTool(isCameraClockViewActive: $isCameraClockViewActive), ChatGPTTool(), WeatherTool(), CameraBoxTool(isCameraViewActive: $isCameraViewActive)])
+        agent = initialize_agent(llm: llm, tools: [ButtonTool(isARButtonViewActive: $isARButtonViewActive), CameraClockTool(isCameraClockViewActive: $isCameraClockViewActive), ChatGPTTool(), WeatherTool(), CameraBoxTool(isCameraViewActive: $isCameraViewActive)])
         
         
         Task {

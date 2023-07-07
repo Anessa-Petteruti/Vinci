@@ -22,6 +22,7 @@ public struct CameraBoxTool: BaseTool {
         DispatchQueue.main.async {
             isCameraViewActive = true
             isARActive = false
+            isARButtonActive = false
         }
         
         // Return a success message or any relevant result

@@ -28,6 +28,8 @@
 		F6FFE4EE2A571C7300239EAF /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE4ED2A571C7300239EAF /* ARViewController.swift */; };
 		F6FFE4F02A57283400239EAF /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE4EF2A57283400239EAF /* CameraView.swift */; };
 		F6FFE4F22A5728B900239EAF /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE4F12A5728B900239EAF /* ChatView.swift */; };
+		F6FFE4F62A579D4D00239EAF /* ARButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE4F52A579D4D00239EAF /* ARButtonViewController.swift */; };
+		F6FFE4F82A579D8300239EAF /* ButtonTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE4F72A579D8300239EAF /* ButtonTool.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +74,8 @@
 		F6FFE4ED2A571C7300239EAF /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
 		F6FFE4EF2A57283400239EAF /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		F6FFE4F12A5728B900239EAF /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		F6FFE4F52A579D4D00239EAF /* ARButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARButtonViewController.swift; sourceTree = "<group>"; };
+		F6FFE4F72A579D8300239EAF /* ButtonTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonTool.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +144,7 @@
 				F6FFE4ED2A571C7300239EAF /* ARViewController.swift */,
 				F6FFE4EF2A57283400239EAF /* CameraView.swift */,
 				F6FFE4F12A5728B900239EAF /* ChatView.swift */,
+				F6FFE4F52A579D4D00239EAF /* ARButtonViewController.swift */,
 			);
 			path = Vinci;
 			sourceTree = "<group>";
@@ -183,6 +188,7 @@
 				F6FFE4E52A550E8E00239EAF /* FindEntityTextResponseTool.swift */,
 				F6FFE4EB2A5710DA00239EAF /* CameraClockTool.swift */,
 				F6FFE4E72A563D7100239EAF /* ChatGPTTool.swift */,
+				F6FFE4F72A579D8300239EAF /* ButtonTool.swift */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -337,8 +343,10 @@
 				F6FFE4E82A563D7100239EAF /* ChatGPTTool.swift in Sources */,
 				F6A7DBD02A4C8E990094EC55 /* ViewController.swift in Sources */,
 				F6A7DBCE2A4C8E7A0094EC55 /* Detector.swift in Sources */,
+				F6FFE4F82A579D8300239EAF /* ButtonTool.swift in Sources */,
 				F6FFE4EA2A56429300239EAF /* ChatAPI.swift in Sources */,
 				F6FFE4EE2A571C7300239EAF /* ARViewController.swift in Sources */,
+				F6FFE4F62A579D4D00239EAF /* ARButtonViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

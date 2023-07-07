@@ -24,6 +24,7 @@ var isCameraViewActive = false
 var userInputGlobal = ""
 var conversation: [String] = []
 var isARActive = false
+var isARButtonActive = false
 
 struct ContentView: View {
     @State private var isSecondScreenActive = false
@@ -136,6 +137,8 @@ struct Tab2View: View {
         VStack{
             if isARActive {
                 ARHostedViewController().ignoresSafeArea()
+            } else if isARButtonActive {
+                ARButtonHostedViewController().ignoresSafeArea()
             } else {
                 HostedViewController().ignoresSafeArea()
             }

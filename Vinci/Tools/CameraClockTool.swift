@@ -23,6 +23,7 @@ public struct CameraClockTool: BaseTool {
             isCameraClockViewActive = true
             isARActive = true
             isCameraViewActive = false
+            isARButtonActive = false
         }
         
         // Return a success message or any relevant result
