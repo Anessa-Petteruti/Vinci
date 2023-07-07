@@ -31,6 +31,7 @@
 		F6FFE4F62A579D4D00239EAF /* ARButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE4F52A579D4D00239EAF /* ARButtonViewController.swift */; };
 		F6FFE4F82A579D8300239EAF /* ButtonTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE4F72A579D8300239EAF /* ButtonTool.swift */; };
 		F6FFE5022A585F1800239EAF /* DeepLabV3.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE5012A585F1800239EAF /* DeepLabV3.mlmodel */; };
+		F6FFE5062A58B3AC00239EAF /* DummyTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE5052A58B3AC00239EAF /* DummyTool.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +79,7 @@
 		F6FFE4F52A579D4D00239EAF /* ARButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARButtonViewController.swift; sourceTree = "<group>"; };
 		F6FFE4F72A579D8300239EAF /* ButtonTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonTool.swift; sourceTree = "<group>"; };
 		F6FFE5012A585F1800239EAF /* DeepLabV3.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = DeepLabV3.mlmodel; sourceTree = "<group>"; };
+		F6FFE5052A58B3AC00239EAF /* DummyTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyTool.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,6 +189,7 @@
 				F6FFE4EB2A5710DA00239EAF /* CameraClockTool.swift */,
 				F6FFE4E72A563D7100239EAF /* ChatGPTTool.swift */,
 				F6FFE4F72A579D8300239EAF /* ButtonTool.swift */,
+				F6FFE5052A58B3AC00239EAF /* DummyTool.swift */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -362,6 +365,7 @@
 				F6FFE4E82A563D7100239EAF /* ChatGPTTool.swift in Sources */,
 				F6FFE5022A585F1800239EAF /* DeepLabV3.mlmodel in Sources */,
 				F6A7DBD02A4C8E990094EC55 /* ViewController.swift in Sources */,
+				F6FFE5062A58B3AC00239EAF /* DummyTool.swift in Sources */,
 				F6A7DBCE2A4C8E7A0094EC55 /* Detector.swift in Sources */,
 				F6FFE4F82A579D8300239EAF /* ButtonTool.swift in Sources */,
 				F6FFE4EA2A56429300239EAF /* ChatAPI.swift in Sources */,

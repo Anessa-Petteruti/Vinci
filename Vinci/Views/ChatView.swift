@@ -33,7 +33,7 @@ struct ChatView: View {
     @State private var agent: AgentExecutor?
     
     @State private var isLoading = false
-    private let chatGPTTool = ChatGPTTool()
+//    private let chatGPTTool = ChatGPTTool()
     
     
     var body: some View {
@@ -262,8 +262,17 @@ struct ChatView: View {
             }
         }
         
-        //        // Make a request to ChatGPT
-        //        let chatGPTResponse = getChatGPTResponse(userMessage: userMessage)
+//        if (isCameraClockViewActive || isARActive || isCameraViewActive || isARButtonViewActive || isARButtonActive) {
+//            print("CAMERA VIEW ACTIVE", isCameraViewActive)
+//            print("NOT REQUESTING CHATGPT")
+//        }
+//        else {
+//            // Make a request to ChatGPT
+//            let chatGPTResponse = getChatGPTResponse(userMessage: userMessage)
+//            print("IN CHAT GPT REQUEST AREA")
+//        }
+        
+        
         isLoading = false
     }
     
@@ -271,45 +280,41 @@ struct ChatView: View {
         userInput = ""
     }
     
-//        static func getChatGPTResponse(userMessage: String) -> String {
-//            @State var scrollToBottom = true
-//            let apiKey = "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"
-//            let endpoint = "https://api.openai.com/v1/chat/completions"
-//            let headers: HTTPHeaders = [
-//                "Authorization": "Bearer \(apiKey)",
-//                "Content-Type": "application/json"
+//    func getChatGPTResponse(userMessage: String) {
+//        let apiKey = "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"
+//        let endpoint = "https://api.openai.com/v1/chat/completions"
+//        let headers: HTTPHeaders = [
+//            "Authorization": "Bearer \(apiKey)",
+//            "Content-Type": "application/json"
+//        ]
+//        let parameters: Parameters = [
+//            "model": "gpt-3.5-turbo",
+//            "messages": [
+//                ["role": "system", "content": "You are a helpful assistant."],
+//                ["role": "user", "content": userMessage]
 //            ]
-//            let parameters: Parameters = [
-//                "model": "gpt-3.5-turbo",
-//                "messages": [
-//                    ["role": "system", "content": "You are a helpful assistant."],
-//                    ["role": "user", "content": userMessage]
-//                ]
-//            ]
+//        ]
 //
-//            AF.request(endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-//                .validate()
-//                .responseJSON { response in
-//                    switch response.result {
-//                    case .success(let value):
-//                        if let json = value as? [String: Any],
-//                           let choices = json["choices"] as? [[String: Any]],
-//                           let chatGPTResponse = choices.first?["message"] as? [String: String],
-//                           let content = chatGPTResponse["content"] {
-//                            scrollToBottom = false // Disable automatic scrolling while appending AI reply
-//                            // Update the UI with the response from ChatGPT
-//                            DispatchQueue.main.async {
-//                                conversation.append("Vinci: \(content)")
-//                                scrollToBottom = true // Re-enable automatic scrolling after appending AI reply
-//                            }
+//        AF.request(endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+//            .validate()
+//            .responseJSON { response in
+//                switch response.result {
+//                case .success(let value):
+//                    if let json = value as? [String: Any],
+//                       let choices = json["choices"] as? [[String: Any]],
+//                       let chatGPTResponse = choices.first?["message"] as? [String: String],
+//                       let content = chatGPTResponse["content"] {
+//                        DispatchQueue.main.async {
+//                            conversation.append("Vinci: \(content)")
+//                            scrollToBottom = true // Re-enable automatic scrolling after appending AI reply
 //                        }
-//                    case .failure(let error):
-//                        print("Error making ChatGPT request: \(error.localizedDescription)")
 //                    }
+//                case .failure(let error):
+//                    print("Error making ChatGPT request: \(error.localizedDescription)")
 //                }
-//
-//            return ""  // Return an empty string for now, as the actual response will be updated asynchronously
-//        }
+//            }
+//    }
+
 }
 
 struct ChatGPTResponse: Decodable {
