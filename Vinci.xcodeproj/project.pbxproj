@@ -110,7 +110,6 @@
 			children = (
 				F6A7DBDC2A4DCF0C0094EC55 /* env.txt */,
 				F692CBF72A48C8E200661CE0 /* Vinci */,
-				F692CBFF2A48C8E400661CE0 /* Preview Content */,
 				F692CC092A48C8E400661CE0 /* VinciTests */,
 				F692CC132A48C8E400661CE0 /* VinciUITests */,
 				F692CBF62A48C8E200661CE0 /* Products */,
@@ -130,6 +129,7 @@
 		F692CBF72A48C8E200661CE0 /* Vinci */ = {
 			isa = PBXGroup;
 			children = (
+				F692CBFF2A48C8E400661CE0 /* Preview Content */,
 				F68DEF252A49CA7E00D0057F /* Info.plist */,
 				F692CC232A48CFE100661CE0 /* Fonts */,
 				F692CBF82A48C8E200661CE0 /* VinciApp.swift */,
