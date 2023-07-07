@@ -16,6 +16,9 @@ import os.log
 import LangChain
 import NaturalLanguage
 
+var highlightedObjects: [String] = []
+var allObservations: [String] = [] // added this here with segmentation work
+
 
 struct ChatView: View {
     //    @State private var conversation: [String] = []
@@ -225,7 +228,7 @@ struct ChatView: View {
                         var maxSimilarity: Float = 0.8
                         var similarWord: String = ""
                         var foundExactMatch = false
-                        
+                        print("ALL OBSERVATIONS IN CHAT", allObservations)
                         for observation in allObservations {
                             let similarity = Float(embedding.distance(between: entity, and: observation))
                             print("SIMILARITY", observation, similarity)

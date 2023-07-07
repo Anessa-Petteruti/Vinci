@@ -18,7 +18,6 @@ import NaturalLanguage
 import ARKit
 
 
-var highlightedObjects: [String] = []
 var isCameraActive = false
 var isCameraViewActive = false
 var userInputGlobal = ""
