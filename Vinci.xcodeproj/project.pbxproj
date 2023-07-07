@@ -30,7 +30,6 @@
 		F6FFE4F22A5728B900239EAF /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE4F12A5728B900239EAF /* ChatView.swift */; };
 		F6FFE4F62A579D4D00239EAF /* ARButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE4F52A579D4D00239EAF /* ARButtonViewController.swift */; };
 		F6FFE4F82A579D8300239EAF /* ButtonTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE4F72A579D8300239EAF /* ButtonTool.swift */; };
-		F6FFE4FC2A57B1B700239EAF /* Segmentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE4FB2A57B1B700239EAF /* Segmentation.swift */; };
 		F6FFE5022A585F1800239EAF /* DeepLabV3.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F6FFE5012A585F1800239EAF /* DeepLabV3.mlmodel */; };
 /* End PBXBuildFile section */
 
@@ -78,7 +77,6 @@
 		F6FFE4F12A5728B900239EAF /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		F6FFE4F52A579D4D00239EAF /* ARButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARButtonViewController.swift; sourceTree = "<group>"; };
 		F6FFE4F72A579D8300239EAF /* ButtonTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonTool.swift; sourceTree = "<group>"; };
-		F6FFE4FB2A57B1B700239EAF /* Segmentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Segmentation.swift; sourceTree = "<group>"; };
 		F6FFE5012A585F1800239EAF /* DeepLabV3.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = DeepLabV3.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -200,7 +198,6 @@
 				F6FFE4ED2A571C7300239EAF /* ARViewController.swift */,
 				F6A7DBCF2A4C8E990094EC55 /* ViewController.swift */,
 				F6A7DBCD2A4C8E7A0094EC55 /* Detector.swift */,
-				F6FFE4FB2A57B1B700239EAF /* Segmentation.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -364,7 +361,6 @@
 				F6FFE4EC2A5710DA00239EAF /* CameraClockTool.swift in Sources */,
 				F6FFE4E82A563D7100239EAF /* ChatGPTTool.swift in Sources */,
 				F6FFE5022A585F1800239EAF /* DeepLabV3.mlmodel in Sources */,
-				F6FFE4FC2A57B1B700239EAF /* Segmentation.swift in Sources */,
 				F6A7DBD02A4C8E990094EC55 /* ViewController.swift in Sources */,
 				F6A7DBCE2A4C8E7A0094EC55 /* Detector.swift in Sources */,
 				F6FFE4F82A579D8300239EAF /* ButtonTool.swift in Sources */,
