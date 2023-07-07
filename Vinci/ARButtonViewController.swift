@@ -45,7 +45,46 @@ class ARButtonViewController: UIViewController, ARSCNViewDelegate {
 
         // Start the AR session
         startARSession()
+        
+        // Add a UIPanGestureRecognizer to the ARSCNView
+                let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+                arView.addGestureRecognizer(panGesture)
     }
+    
+   
+
+
+    @objc func handlePan(_ gesture: UIPanGestureRecognizer) {
+        guard let buttonNode = buttonNode else { return }
+
+        let touchLocation = gesture.location(in: arView)
+
+        switch gesture.state {
+        case .began:
+            // Check if the touch started on the button node
+            let hitTestResults = arView.hitTest(touchLocation, options: nil)
+            if let hitNode = hitTestResults.first?.node, hitNode == buttonNode {
+                // Start dragging the button node
+                buttonNode.removeAllActions()
+            }
+        case .changed:
+            // Get the position in the 3D world coordinates
+            let hitTestResults = arView.hitTest(touchLocation, types: .existingPlaneUsingExtent)
+            guard let hitResult = hitTestResults.first else { return }
+            let position = hitResult.worldTransform.columns.3
+
+            // Update the position of the button node based on the touch location
+            buttonNode.position = SCNVector3(position.x, position.y, position.z)
+        case .ended, .cancelled:
+            // Add animations or other logic when the dragging ends
+            // ...
+            break
+        default:
+            break
+        }
+    }
+
+
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
