@@ -14,7 +14,7 @@ public struct ButtonTool: BaseTool {
     }
     
     public func description() -> String {
-        "use when the user asks to be taken to Food Finessa"
+        "use when the user asks to be taken to Wikipedia"
     }
     
     public func _run(args: String) throws -> String {

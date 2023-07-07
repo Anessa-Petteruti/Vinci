@@ -66,7 +66,7 @@ class ARButtonViewController: UIViewController, ARSCNViewDelegate {
     func addButtonNodeToScene() {
         // Create a rounded button geometry
         let buttonRadius: CGFloat = 0.05
-        let buttonGeometry = SCNCylinder(radius: buttonRadius, height: 0.01)
+        let buttonGeometry = SCNCylinder(radius: buttonRadius, height: 0.1)
 
         // Set the material for the button
         let material = SCNMaterial()

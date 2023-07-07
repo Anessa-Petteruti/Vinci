@@ -90,8 +90,8 @@ struct SecondView: View {
                     Button(action: {
                         selectedTab = index
                     }) {
-                        Text("Tab \(index)")
-                            .font(.headline)
+                        Text("\(index)")
+                            .font(.interFont(size: 20, weight: .thin))
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(selectedTab == index ? Color.white : Color.black)
