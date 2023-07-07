@@ -133,17 +133,31 @@ struct Tab1View: View {
 }
 
 struct Tab2View: View {
+    private var captureSession: AVCaptureSession? // Update captureSession to be an optional
+    
     var body: some View {
         VStack{
             if isARActive {
-                ARHostedViewController().ignoresSafeArea()
+                ARHostedViewController().ignoresSafeArea().onDisappear {
+                    stopCamera()
+                }
             } else if isARButtonActive {
-                ARButtonHostedViewController().ignoresSafeArea()
+                ARButtonHostedViewController().ignoresSafeArea().onDisappear {
+                    stopCamera()
+                }
             } else {
-                HostedViewController().ignoresSafeArea()
+                HostedViewController().ignoresSafeArea().onDisappear {
+                    stopCamera()
+                }
             }
             
         }
+    }
+    private func stopCamera() {
+        isCameraActive = false
+        isARActive = false
+        isARButtonActive = false
+        captureSession?.stopRunning() // Stop the AVCaptureSession
     }
 }
 

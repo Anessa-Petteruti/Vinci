@@ -18,6 +18,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private let sessionQueue = DispatchQueue(label: "sessionQueue")
     private var previewLayer = AVCaptureVideoPreviewLayer()
     var screenRect: CGRect! = nil // For view dimensions
+//    var currentSampleBuffer: CMSampleBuffer?
+
     
     // Detector
     private var videoOutput = AVCaptureVideoDataOutput()
